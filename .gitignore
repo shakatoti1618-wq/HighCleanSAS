@@ -1,0 +1,26 @@
+# Dependencias
+node_modules/
+
+# Builds
+dist/
+build/
+
+# Variables de entorno (los secretos nunca van a Git)
+.env
+.env.local
+
+# Sistema y editor
+.DS_Store
+
+# Logs
+*.log
+
+# Vite
+.vite/
+
+# Testing
+coverage/
+
+# Reglas del agente e índice (solo local, por privacidad)
+.agents/
+AGENTS.md
