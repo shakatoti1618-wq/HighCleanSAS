@@ -20,7 +20,3 @@ build/
 
 # Testing
 coverage/
-
-# Reglas del agente e índice (solo local, por privacidad)
-.agents/
-AGENTS.md
