@@ -16,7 +16,7 @@ Este es el índice de instrucciones permanentes del proyecto. Léelo por complet
 - No implementes funcionalidades de un módulo antes de llegar a él (especialmente `/api/v1/auth` y `/api/v1/chat`).
 - Trabaja un módulo a la vez, en el orden de la sección de módulos. Al terminar cada uno, usa el formato de cierre definido y **detente a esperar mi autorización** — no continúes automáticamente al siguiente.
 - Railway/Vercel/Render/etc. nunca son una dependencia de la aplicación; todo pasa por estándares (`DATABASE_URL`, variables de entorno).
-- `.agents/` y este archivo son solo locales y **no se versionan en Git** (están en `.gitignore`).
+- El prompt maestro (`.agents/rules/`) y este archivo **se versionan en Git por archivos** y se mantienen actualizados en cada módulo.
 
 ## Estado actual
 
