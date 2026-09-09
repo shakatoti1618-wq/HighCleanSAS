@@ -5,11 +5,11 @@ import { createApp } from './app.js'
 const app = createApp()
 
 describe('GET /api/v1/health', () => {
-  it('responde ok con estado y timestamp', async () => {
+  it('responde ok con estado, base de datos y timestamp', async () => {
     const response = await request(app).get('/api/v1/health')
 
     expect(response.status).toBe(200)
-    expect(response.body).toMatchObject({ status: 'ok' })
+    expect(response.body).toMatchObject({ status: 'ok', database: 'up' })
     expect(response.body.timestamp).toBeTypeOf('string')
     expect(new Date(response.body.timestamp).getTime()).not.toBeNaN()
   })
