@@ -1,0 +1,15 @@
+# Dependencias
+node_modules/
+
+# Build
+dist/
+
+# Variables de entorno (secretos, nunca a Git)
+.env
+.env.local
+
+# Logs
+*.log
+
+# Testing
+coverage/
