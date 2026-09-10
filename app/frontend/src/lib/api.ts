@@ -11,6 +11,23 @@ export interface Company {
   schedules: string | null
 }
 
+export interface Service {
+  id: string
+  name: string
+  description: string | null
+  companyId: string
+}
+
+export async function fetchServices(): Promise<Service[]> {
+  const response = await fetch('/api/v1/services')
+
+  if (!response.ok) {
+    throw new Error('No se pudieron cargar los servicios')
+  }
+
+  return response.json() as Promise<Service[]>
+}
+
 export async function fetchCompany(): Promise<Company> {
   const response = await fetch('/api/v1/company')
 
