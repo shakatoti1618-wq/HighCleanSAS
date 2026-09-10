@@ -18,6 +18,24 @@ export interface Service {
   companyId: string
 }
 
+export interface GalleryImage {
+  id: string
+  url: string
+  alt: string | null
+  companyId: string
+  createdAt: string
+}
+
+export async function fetchGalleryImages(): Promise<GalleryImage[]> {
+  const response = await fetch('/api/v1/gallery')
+
+  if (!response.ok) {
+    throw new Error('No se pudieron cargar las imágenes')
+  }
+
+  return response.json() as Promise<GalleryImage[]>
+}
+
 export async function fetchServices(): Promise<Service[]> {
   const response = await fetch('/api/v1/services')
 
