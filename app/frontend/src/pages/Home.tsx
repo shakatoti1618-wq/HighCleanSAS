@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'motion/react'
 import { EASE } from '../lib/motion.ts'
+import Reviews from '../components/Reviews.tsx'
 
 function Droplet({ id }: { id: string }) {
   return (
@@ -37,11 +38,12 @@ function Home() {
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.14])
 
   return (
-    <section
-      ref={ref}
-      className="relative overflow-hidden"
-      aria-label="Presentación"
-    >
+    <>
+      <section
+        ref={ref}
+        className="relative overflow-hidden"
+        aria-label="Presentación"
+      >
       <h1 className="sr-only">High Clean SAS</h1>
 
       <div className="absolute inset-0" aria-hidden="true">
@@ -189,6 +191,9 @@ function Home() {
         </svg>
       </div>
     </section>
+
+    <Reviews />
+    </>
   )
 }
 
