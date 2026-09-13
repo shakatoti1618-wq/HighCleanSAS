@@ -3,6 +3,7 @@ import { MotionConfig } from 'motion/react'
 import Background from './Background.tsx'
 import Footer from './Footer.tsx'
 import Navbar from './Navbar.tsx'
+import WhatsAppButton from './WhatsAppButton.tsx'
 
 function Layout() {
   return (
@@ -20,6 +21,7 @@ function Layout() {
           <Outlet />
         </main>
         <Footer />
+        <WhatsAppButton />
       </div>
     </MotionConfig>
   )
