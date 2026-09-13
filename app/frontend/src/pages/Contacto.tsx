@@ -1,12 +1,9 @@
-import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react'
+import { useState, type ChangeEvent, type FormEvent } from 'react'
 import { CheckCircle2, Loader2, Mail, MapPin, Phone } from 'lucide-react'
 import { motion } from 'motion/react'
+import { useCompany } from '../hooks/useCompany.ts'
 import { EASE } from '../lib/motion.ts'
-import {
-  fetchCompany,
-  sendContactMessage,
-  type Company,
-} from '../lib/api.ts'
+import { sendContactMessage } from '../lib/api.ts'
 
 const TODO_TEXT = 'TODO: información pendiente de confirmar con High Clean SAS'
 
@@ -22,32 +19,16 @@ const contactItems = [
 type ContactKey = (typeof contactItems)[number]['key']
 
 function Contacto() {
+  const { company } = useCompany()
   const [form, setForm] = useState({
     name: '',
     email: '',
     message: '',
     website: '',
   })
-  const [company, setCompany] = useState<Company | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    let active = true
-
-    fetchCompany()
-      .then((data) => {
-        if (active) setCompany(data)
-      })
-      .catch(() => {
-        if (active) setCompany(null)
-      })
-
-    return () => {
-      active = false
-    }
-  }, [])
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
