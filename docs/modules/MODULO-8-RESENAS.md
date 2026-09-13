@@ -96,11 +96,13 @@ Frontend: lint ✅ typecheck ✅ test ✅ (3) build ✅ (chunk Resenas separado)
 Smoke: GET :3000/api/v1/reviews → 3 reseñas APPROVED (seed)
 ```
 
-Tests nuevos (`reviews.test.ts`), con limpieza `beforeEach` porque `author` no es único:
+Tests nuevos (`reviews.test.ts`), con limpieza `beforeEach`/`afterEach`:
 
 1. Solo devuelve reseñas `APPROVED` (se insertan APPROVED + PENDING + REJECTED y solo aparece la primera).
 2. Orden `createdAt DESC, id DESC` (insertadas fuera de orden, respuesta `['T3','T2','T1']`).
 3. Lista vacía `[]` cuando solo hay reseñas no aprobadas.
+
+**Aislamiento:** como `GET /api/v1/reviews` es global (sin filtro por empresa, igual que services/gallery), el `beforeEach` borra todas las reseñas de la BD de prueba y la empresa de prueba, para que la respuesta no contamine el seed. Consecuencia: al correr los tests locales se limpian las reseñas de ejemplo del seed; se restauran con `npm run db:seed` (idempotente).
 
 ## Git
 
