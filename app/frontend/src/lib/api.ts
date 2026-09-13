@@ -75,3 +75,29 @@ export async function fetchCompany(): Promise<Company> {
 
   return response.json() as Promise<Company>
 }
+
+export interface ContactMessageInput {
+  name: string
+  email: string
+  message: string
+  website?: string
+}
+
+export async function sendContactMessage(
+  input: ContactMessageInput,
+): Promise<void> {
+  const response = await fetch('/api/v1/contact', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+  })
+
+  if (!response.ok) {
+    const detail = (await response.json().catch(() => null)) as {
+      error?: { message?: string }
+    } | null
+    throw new Error(
+      detail?.error?.message ?? 'No se pudo enviar el mensaje de contacto',
+    )
+  }
+}
