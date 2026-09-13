@@ -6,6 +6,7 @@ export interface Company {
   vision: string | null
   values: string | null
   phone: string | null
+  whatsappNumber: string | null
   email: string | null
   address: string | null
   schedules: string | null
