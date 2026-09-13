@@ -1,5 +1,5 @@
 import request from 'supertest'
-import { afterAll, describe, expect, it } from 'vitest'
+import { afterAll, afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { createApp } from './app.js'
 import { prisma } from './lib/prisma.js'
 
@@ -7,11 +7,19 @@ const app = createApp()
 
 const TEST_COMPANY = 'Empresa de prueba módulo 7'
 
-afterAll(async () => {
+beforeEach(async () => {
+  await prisma.galleryImage.deleteMany()
+  await prisma.company.deleteMany({ where: { name: TEST_COMPANY } })
+})
+
+afterEach(async () => {
   await prisma.galleryImage.deleteMany({
     where: { company: { name: TEST_COMPANY } },
   })
   await prisma.company.deleteMany({ where: { name: TEST_COMPANY } })
+})
+
+afterAll(async () => {
   await prisma.$disconnect()
 })
 
