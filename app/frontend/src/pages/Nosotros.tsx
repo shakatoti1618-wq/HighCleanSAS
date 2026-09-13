@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react'
 import { ArrowRight, Eye, Gem, Target } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
+import { useCompany } from '../hooks/useCompany.ts'
 import { EASE } from '../lib/motion.ts'
-import { fetchCompany, type Company } from '../lib/api.ts'
 
 const TODO_TEXT = 'TODO: información pendiente de confirmar con High Clean SAS'
 
@@ -37,24 +36,7 @@ function Droplet({ id }: { id: string }) {
 }
 
 function Nosotros() {
-  const [company, setCompany] = useState<Company | null>(null)
-  const [error, setError] = useState(false)
-
-  useEffect(() => {
-    let active = true
-
-    fetchCompany()
-      .then((data) => {
-        if (active) setCompany(data)
-      })
-      .catch(() => {
-        if (active) setError(true)
-      })
-
-    return () => {
-      active = false
-    }
-  }, [])
+  const { company, error } = useCompany()
 
   return (
     <section
