@@ -24,22 +24,23 @@ model User {
 }
 
 model Company {
-  id          String           @id @default(uuid())
-  name        String
-  description String?
-  mission     String?
-  vision      String?
-  values      String?
-  phone       String?
-  email       String?
-  address     String?
-  schedules   String?
-  services    Service[]
-  reviews     Review[]
-  gallery     GalleryImage[]
-  messages    ContactMessage[]
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
+  id             String           @id @default(uuid())
+  name           String
+  description    String?
+  mission        String?
+  vision         String?
+  values         String?
+  phone          String?
+  whatsappNumber String?
+  email          String?
+  address        String?
+  schedules      String?
+  services       Service[]
+  reviews        Review[]
+  gallery        GalleryImage[]
+  messages       ContactMessage[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
 }
 
 model Service {
