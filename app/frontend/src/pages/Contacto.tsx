@@ -1,7 +1,12 @@
-import { useState, type ChangeEvent, type FormEvent } from 'react'
-import { Mail, MapPin, Phone } from 'lucide-react'
+import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react'
+import { CheckCircle2, Loader2, Mail, MapPin, Phone } from 'lucide-react'
 import { motion } from 'motion/react'
 import { EASE } from '../lib/motion.ts'
+import {
+  fetchCompany,
+  sendContactMessage,
+  type Company,
+} from '../lib/api.ts'
 
 const TODO_TEXT = 'TODO: información pendiente de confirmar con High Clean SAS'
 
@@ -9,13 +14,40 @@ const inputClass =
   'w-full rounded-sm border border-slate-200 bg-white px-4 py-3 text-slate-800 placeholder:text-slate-400 transition-shadow focus:border-transparent focus:outline-none focus:ring-2 focus:ring-brand-turq'
 
 const contactItems = [
-  { icon: Phone, label: 'Teléfono' },
-  { icon: Mail, label: 'Correo electrónico' },
-  { icon: MapPin, label: 'Dirección' },
-]
+  { icon: Phone, label: 'Teléfono', key: 'phone' },
+  { icon: Mail, label: 'Correo electrónico', key: 'email' },
+  { icon: MapPin, label: 'Dirección', key: 'address' },
+] as const
+
+type ContactKey = (typeof contactItems)[number]['key']
 
 function Contacto() {
-  const [form, setForm] = useState({ name: '', email: '', message: '' })
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    message: '',
+    website: '',
+  })
+  const [company, setCompany] = useState<Company | null>(null)
+  const [submitting, setSubmitting] = useState(false)
+  const [sent, setSent] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let active = true
+
+    fetchCompany()
+      .then((data) => {
+        if (active) setCompany(data)
+      })
+      .catch(() => {
+        if (active) setCompany(null)
+      })
+
+    return () => {
+      active = false
+    }
+  }, [])
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -24,9 +56,35 @@ function Contacto() {
     setForm((previous) => ({ ...previous, [name]: value }))
   }
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    // Envío real se implementa en el Módulo 9 (Contacto, backend).
+    setSubmitting(true)
+    setSent(false)
+    setError(null)
+
+    try {
+      await sendContactMessage({
+        name: form.name,
+        email: form.email,
+        message: form.message,
+        website: form.website,
+      })
+      setSent(true)
+      setForm({ name: '', email: '', message: '', website: '' })
+    } catch (submitError) {
+      setError(
+        submitError instanceof Error
+          ? submitError.message
+          : 'No se pudo enviar el mensaje. Intenta de nuevo más tarde.',
+      )
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const valueFor = (key: ContactKey) => {
+    const value = company?.[key]
+    return value ?? 'pendiente de confirmar'
   }
 
   return (
@@ -57,7 +115,7 @@ function Contacto() {
             </p>
 
             <address className="mb-10 space-y-5 not-italic">
-              {contactItems.map(({ icon: Icon, label }) => (
+              {contactItems.map(({ icon: Icon, label, key }) => (
                 <p key={label} className="flex items-center gap-4">
                   <span
                     className="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm border border-brand-turq/30 bg-brand-turq/10"
@@ -66,7 +124,7 @@ function Contacto() {
                     <Icon className="h-5 w-5 text-brand-turqDeep" />
                   </span>
                   <span className="text-brand-ink">
-                    {label}: pendiente de confirmar
+                    {label}: {valueFor(key)}
                   </span>
                 </p>
               ))}
@@ -84,6 +142,21 @@ function Contacto() {
               Envíanos un mensaje
             </h2>
             <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="sr-only" aria-hidden="true">
+                <label htmlFor="contact-website">
+                  Déjalo vacío (campo anti-spam)
+                </label>
+                <input
+                  id="contact-website"
+                  type="text"
+                  name="website"
+                  value={form.website}
+                  onChange={handleChange}
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+              </div>
+
               <label className="block">
                 <span className="mb-1.5 block text-sm font-medium text-brand-ink">
                   Nombre
@@ -123,11 +196,38 @@ function Contacto() {
                   className={`${inputClass} resize-none`}
                 />
               </label>
+
+              {sent && (
+                <p
+                  role="status"
+                  className="flex items-center gap-2 rounded-sm border border-brand-leaf/40 bg-brand-leaf/10 px-4 py-3 text-sm font-medium text-brand-leafDeep"
+                >
+                  <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
+                  Mensaje enviado. Te responderemos pronto.
+                </p>
+              )}
+
+              {error && (
+                <p
+                  role="alert"
+                  className="rounded-sm border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                >
+                  {error}
+                </p>
+              )}
+
               <button
                 type="submit"
-                className="w-full rounded-sm bg-brand-turq py-4 font-semibold text-white shadow-md transition-colors hover:bg-brand-turqDeep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-turq focus-visible:ring-offset-2"
+                disabled={submitting}
+                className="flex w-full items-center justify-center gap-2 rounded-sm bg-brand-turq py-4 font-semibold text-white shadow-md transition-colors hover:bg-brand-turqDeep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-turq focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Enviar mensaje
+                {submitting && (
+                  <Loader2
+                    className="h-5 w-5 animate-spin"
+                    aria-hidden="true"
+                  />
+                )}
+                {submitting ? 'Enviando…' : 'Enviar mensaje'}
               </button>
             </form>
           </motion.div>
