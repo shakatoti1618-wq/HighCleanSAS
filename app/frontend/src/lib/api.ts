@@ -26,6 +26,26 @@ export interface GalleryImage {
   createdAt: string
 }
 
+export interface Review {
+  id: string
+  author: string
+  content: string
+  rating: number
+  status: 'APPROVED'
+  companyId: string
+  createdAt: string
+}
+
+export async function fetchApprovedReviews(): Promise<Review[]> {
+  const response = await fetch('/api/v1/reviews')
+
+  if (!response.ok) {
+    throw new Error('No se pudieron cargar las reseñas')
+  }
+
+  return response.json() as Promise<Review[]>
+}
+
 export async function fetchGalleryImages(): Promise<GalleryImage[]> {
   const response = await fetch('/api/v1/gallery')
 
