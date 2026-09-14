@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom'
 import { MotionConfig } from 'motion/react'
 import Background from './Background.tsx'
+import ChatWidget from './ChatWidget.tsx'
 import Footer from './Footer.tsx'
 import Navbar from './Navbar.tsx'
 import WhatsAppButton from './WhatsAppButton.tsx'
@@ -21,6 +22,7 @@ function Layout() {
           <Outlet />
         </main>
         <Footer />
+        <ChatWidget />
         <WhatsAppButton />
       </div>
     </MotionConfig>
