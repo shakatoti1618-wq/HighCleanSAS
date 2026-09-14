@@ -23,6 +23,15 @@ model User {
   updatedAt    DateTime @updatedAt
 }
 
+model Session {
+  id        String    @id
+  data      String    @db.Text
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+
+  @@map("sessions")
+}
+
 model Company {
   id             String           @id @default(uuid())
   name           String
