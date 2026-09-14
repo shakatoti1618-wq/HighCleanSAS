@@ -56,6 +56,10 @@ export class KnowledgeChatProvider implements ChatProvider {
       return `¡Hola! Soy el asistente informativo de ${companyName}. Pregúntame por sus servicios, la empresa, horarios o cómo contactarlos.`
     }
 
+    if (hasAny(text, ['precio', 'precios', 'costo', 'costos', 'cotizacion', 'cotizar', 'tarifa', 'cuanto cuesta', 'cuanto vale', 'valor', 'cobran', 'cobrar', 'pago', 'pagos'])) {
+      return `Los precios de ${companyName} aún no están publicados. Te recomiendo solicitar una cotización directa. ${TO_CONTACT_HINT}`
+    }
+
     if (hasAny(text, ['servicio', 'servicios', 'que hacen', 'que ofrecen', 'limpieza', 'aseo', 'trabajos', 'portfolio', 'portafolio'])) {
       return `Estos son los servicios que tengo registrados de ${companyName}:\n${listServices(context)}`
     }
@@ -69,10 +73,6 @@ export class KnowledgeChatProvider implements ChatProvider {
 
     if (hasAny(text, ['contacto', 'contactar', 'telefono', 'numero', 'correo', 'email', 'direccion', 'whatsapp', 'ubicacion', 'ubicados', 'contactarlos'])) {
       return contactInfo(context)
-    }
-
-    if (hasAny(text, ['precio', 'precios', 'costo', 'costos', 'cotizacion', 'cotizar', 'tarifa', 'cuanto cuesta', 'cuanto vale', 'valor'])) {
-      return `Los precios de ${companyName} aún no están publicados. Te recomiendo solicitar una cotización directa. ${TO_CONTACT_HINT}`
     }
 
     if (
