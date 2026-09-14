@@ -102,3 +102,23 @@ export async function sendContactMessage(
     )
   }
 }
+
+export async function sendChatMessage(message: string): Promise<string> {
+  const response = await fetch('/api/v1/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message }),
+  })
+
+  if (!response.ok) {
+    const detail = (await response.json().catch(() => null)) as {
+      error?: { message?: string }
+    } | null
+    throw new Error(
+      detail?.error?.message ?? 'No se pudo obtener una respuesta del asistente',
+    )
+  }
+
+  const data = (await response.json()) as { response: string }
+  return data.response
+}
