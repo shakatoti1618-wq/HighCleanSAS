@@ -27,3 +27,17 @@ export const contactLimiter = rateLimit({
     },
   },
 })
+
+export const chatLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 20,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  skip: () => env.NODE_ENV === 'test',
+  message: {
+    error: {
+      message: 'Demasiadas peticiones de chat. Espera un momento.',
+      code: 'RATE_LIMIT',
+    },
+  },
+})
