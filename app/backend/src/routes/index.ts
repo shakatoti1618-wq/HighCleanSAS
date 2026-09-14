@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import chatRouter from './chat.routes.js'
 import companyRouter from './company.routes.js'
 import contactRouter from './contact.routes.js'
 import galleryRouter from './gallery.routes.js'
@@ -14,5 +15,6 @@ apiRouter.use('/services', serviceRouter)
 apiRouter.use('/gallery', galleryRouter)
 apiRouter.use('/reviews', reviewRouter)
 apiRouter.use('/contact', contactRouter)
+apiRouter.use('/chat', chatRouter)
 
 export default apiRouter
