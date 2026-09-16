@@ -10,6 +10,7 @@ const baseCompany: Company = {
   description: null,
   mission: null,
   vision: null,
+  qualityPolicy: null,
   values: null,
   phone: null,
   whatsappNumber: null,

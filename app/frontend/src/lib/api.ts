@@ -1,10 +1,16 @@
+export interface CompanyValue {
+  name: string
+  description: string
+}
+
 export interface Company {
   id: string
   name: string
   description: string | null
   mission: string | null
   vision: string | null
-  values: string | null
+  qualityPolicy: string | null
+  values: CompanyValue[] | null
   phone: string | null
   whatsappNumber: string | null
   email: string | null
