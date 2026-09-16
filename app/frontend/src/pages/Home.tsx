@@ -1,8 +1,11 @@
 import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'motion/react'
-import { EASE } from '../lib/motion.ts'
 import Reviews from '../components/Reviews.tsx'
+import Seo from '../components/Seo.tsx'
+import { useCompany } from '../hooks/useCompany.ts'
+import { EASE } from '../lib/motion.ts'
+import { localBusinessJson } from '../lib/seo.ts'
 
 function Droplet({ id }: { id: string }) {
   return (
@@ -29,6 +32,7 @@ function Droplet({ id }: { id: string }) {
 
 function Home() {
   const ref = useRef<HTMLElement | null>(null)
+  const { company } = useCompany()
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start start', 'end start'],
@@ -36,9 +40,16 @@ function Home() {
   const yDrop = useTransform(scrollYProgress, [0, 1], [0, 150])
   const yDrop2 = useTransform(scrollYProgress, [0, 1], [0, -90])
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.14])
+  const jsonLd = company ? localBusinessJson(company) : null
 
   return (
     <>
+      <Seo
+        title="High Clean SAS — Servicios profesionales de limpieza"
+        description="High Clean SAS — empresa de aseo y limpieza profesional. Información de la empresa, servicios y contacto."
+        canonicalPath="/"
+        jsonLd={jsonLd ? [jsonLd] : []}
+      />
       <section
         ref={ref}
         className="relative overflow-hidden"

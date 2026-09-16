@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 import { ArrowRight, Brush, Building2, Images, Sparkles, Wind } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
+import Seo from '../components/Seo.tsx'
 import { container, itemCard } from '../lib/motion.ts'
 import { fetchServices, type Service } from '../lib/api.ts'
+import { servicesJson } from '../lib/seo.ts'
 
 const TODO_TEXT = 'TODO: información pendiente de confirmar con High Clean SAS'
 
@@ -34,6 +36,18 @@ function Servicios() {
       className="relative bg-white/50 py-24"
       aria-labelledby="servicios-title"
     >
+      <Seo
+        title="Servicios de limpieza — High Clean SAS"
+        description="Servicios de aseo y limpieza profesional de High Clean SAS para todo tipo de instalaciones. Solicita una cotización."
+        canonicalPath="/servicios"
+        jsonLd={
+            services
+              ? [servicesJson(services)].filter(
+                  (block): block is object => block !== null,
+                )
+              : []
+          }
+      />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-14 max-w-2xl">
           <div className="mb-5 flex items-center gap-3">

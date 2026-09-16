@@ -1,6 +1,7 @@
 import { ArrowRight, BadgeCheck, Eye, Target } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
+import Seo from '../components/Seo.tsx'
 import { useCompany } from '../hooks/useCompany.ts'
 import { EASE } from '../lib/motion.ts'
 
@@ -42,6 +43,11 @@ function Nosotros() {
       className="relative bg-white/30 py-24"
       aria-labelledby="nosotros-title"
     >
+      <Seo
+        title="Nosotros — High Clean SAS"
+        description="Conoce a High Clean SAS: misión, visión, valores, política de calidad y más información de la empresa."
+        canonicalPath="/nosotros"
+      />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-14 lg:grid-cols-2">
           <motion.div

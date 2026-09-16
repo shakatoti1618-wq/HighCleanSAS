@@ -2,6 +2,7 @@ import { useState, type ChangeEvent, type FormEvent } from 'react'
 import { CheckCircle2, Loader2, Mail, MapPin, Phone } from 'lucide-react'
 import { motion } from 'motion/react'
 import DataConsentCheckbox from '../components/DataConsentCheckbox.tsx'
+import Seo from '../components/Seo.tsx'
 import { useCompany } from '../hooks/useCompany.ts'
 import { EASE } from '../lib/motion.ts'
 import { sendContactMessage } from '../lib/api.ts'
@@ -76,6 +77,11 @@ function Contacto() {
       className="relative bg-white/60 py-24"
       aria-labelledby="contacto-title"
     >
+      <Seo
+        title="Contacto — High Clean SAS"
+        description="Contacta con High Clean SAS para solicitar una cotización de servicios de aseo y limpieza."
+        canonicalPath="/contacto"
+      />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-start gap-14 lg:grid-cols-2">
           <motion.div

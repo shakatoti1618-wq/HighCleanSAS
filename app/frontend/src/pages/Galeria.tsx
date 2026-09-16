@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Images } from 'lucide-react'
 import { motion } from 'motion/react'
+import Seo from '../components/Seo.tsx'
 import { container, item } from '../lib/motion.ts'
 import { fetchGalleryImages, type GalleryImage } from '../lib/api.ts'
 
@@ -31,6 +32,11 @@ function Galeria() {
       className="relative bg-white/50 py-24"
       aria-labelledby="galeria-title"
     >
+      <Seo
+        title="Galería — High Clean SAS"
+        description="Fotografías de los trabajos de limpieza profesional de High Clean SAS."
+        canonicalPath="/galeria"
+      />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-14 max-w-2xl">
           <div className="mb-5 flex items-center gap-3">

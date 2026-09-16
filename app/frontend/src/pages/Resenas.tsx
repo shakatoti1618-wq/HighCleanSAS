@@ -1,19 +1,28 @@
 import { Quote } from 'lucide-react'
 import { motion } from 'motion/react'
 import ReviewCard from '../components/ReviewCard.tsx'
+import Seo from '../components/Seo.tsx'
 import { useApprovedReviews } from '../hooks/useApprovedReviews.ts'
 import { container, itemCard } from '../lib/motion.ts'
+import { reviewsJson } from '../lib/seo.ts'
 
 const TODO_TEXT = 'TODO: información pendiente de confirmar con High Clean SAS'
 
 function Resenas() {
   const { reviews, error } = useApprovedReviews()
+  const jsonLd = reviews ? reviewsJson('High Clean SAS', reviews) : null
 
   return (
     <section
       className="relative bg-white/50 py-24"
       aria-labelledby="resenas-title"
     >
+      <Seo
+        title="Reseñas y opiniones — High Clean SAS"
+        description="Reseñas de clientes sobre los servicios de aseo y limpieza de High Clean SAS."
+        canonicalPath="/resenas"
+        jsonLd={jsonLd ? [jsonLd] : []}
+      />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-14 max-w-2xl">
           <div className="mb-5 flex items-center gap-3">

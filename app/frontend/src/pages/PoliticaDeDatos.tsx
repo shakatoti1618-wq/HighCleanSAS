@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { motion } from 'motion/react'
+import Seo from '../components/Seo.tsx'
 import { EASE } from '../lib/motion.ts'
 
 interface Section {
@@ -156,6 +157,11 @@ function PoliticaDeDatos() {
       className="relative bg-white/60 py-24"
       aria-labelledby="politica-title"
     >
+      <Seo
+        title="Política de Tratamiento de Datos Personales — High Clean SAS"
+        description="Política de Tratamiento de Datos Personales de High Clean SAS conforme a la Ley 1581 de 2012."
+        canonicalPath="/politica-de-datos"
+      />
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 24 }}

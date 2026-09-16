@@ -2,6 +2,7 @@ import { useState, type ChangeEvent, type FormEvent } from 'react'
 import { CheckCircle2, FileText, Loader2 } from 'lucide-react'
 import { motion } from 'motion/react'
 import DataConsentCheckbox from '../components/DataConsentCheckbox.tsx'
+import Seo from '../components/Seo.tsx'
 import { applyJob } from '../lib/jobs.ts'
 import { EASE } from '../lib/motion.ts'
 
@@ -88,6 +89,11 @@ function TrabajaConNosotros() {
       className="relative bg-white/60 py-24"
       aria-labelledby="trabaja-title"
     >
+      <Seo
+        title="Trabaja con nosotros — High Clean SAS"
+        description="Forma parte del equipo de High Clean SAS. Envía tu hoja de vida y el cargo al que aplicas."
+        canonicalPath="/trabaja-con-nosotros"
+      />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-start gap-14 lg:grid-cols-2">
           <motion.div
