@@ -1,4 +1,4 @@
-import { ArrowRight, Eye, Gem, Target } from 'lucide-react'
+import { ArrowRight, BadgeCheck, Eye, Target } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { useCompany } from '../hooks/useCompany.ts'
@@ -9,7 +9,6 @@ const TODO_TEXT = 'TODO: información pendiente de confirmar con High Clean SAS'
 const sections = [
   { key: 'mission', label: 'Misión', icon: Target },
   { key: 'vision', label: 'Visión', icon: Eye },
-  { key: 'values', label: 'Valores', icon: Gem },
 ] as const
 
 function Droplet({ id }: { id: string }) {
@@ -67,7 +66,7 @@ function Nosotros() {
                 : (company?.description ?? TODO_TEXT)}
             </p>
 
-            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2">
               {sections.map((section) => {
                 const Icon = section.icon
                 const content = company?.[section.key] ?? TODO_TEXT
@@ -92,6 +91,46 @@ function Nosotros() {
                   </article>
                 )
               })}
+            </div>
+
+            <div className="mt-10">
+              <h2 className="mb-4 flex items-center gap-2.5 font-display text-xl font-semibold text-brand-ink">
+                Nuestros valores
+              </h2>
+              {company?.values?.length ? (
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {company.values.map((value) => (
+                    <article
+                      key={value.name}
+                      className="rounded-sm border border-brand-turqSoft bg-white p-5 shadow-md transition-all duration-500 hover:-translate-y-2 hover:shadow-xl"
+                    >
+                      <h3 className="mb-1.5 font-display text-base font-semibold text-brand-turqDeep">
+                        {value.name}
+                      </h3>
+                      <p className="text-sm leading-relaxed text-slate-600">
+                        {value.description}
+                      </p>
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <p className="max-w-xl text-sm leading-relaxed text-slate-600">
+                  {TODO_TEXT}
+                </p>
+              )}
+            </div>
+
+            <div className="mt-10 rounded-sm border border-brand-turqSoft bg-white p-6 shadow-md md:p-7">
+              <h2 className="mb-2.5 flex items-center gap-2.5 font-display text-xl font-semibold text-brand-ink">
+                <BadgeCheck
+                  className="h-6 w-6 text-brand-leafDeep"
+                  aria-hidden="true"
+                />
+                Política de calidad
+              </h2>
+              <p className="text-sm leading-relaxed text-slate-600">
+                {company?.qualityPolicy ?? TODO_TEXT}
+              </p>
             </div>
 
             <Link

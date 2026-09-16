@@ -1,6 +1,7 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react'
 import { CheckCircle2, Loader2, Mail, MapPin, Phone } from 'lucide-react'
 import { motion } from 'motion/react'
+import DataConsentCheckbox from '../components/DataConsentCheckbox.tsx'
 import { useCompany } from '../hooks/useCompany.ts'
 import { EASE } from '../lib/motion.ts'
 import { sendContactMessage } from '../lib/api.ts'
@@ -29,6 +30,7 @@ function Contacto() {
   const [submitting, setSubmitting] = useState(false)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [consent, setConsent] = useState(false)
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -52,6 +54,7 @@ function Contacto() {
       })
       setSent(true)
       setForm({ name: '', email: '', message: '', website: '' })
+      setConsent(false)
     } catch (submitError) {
       setError(
         submitError instanceof Error
@@ -168,15 +171,22 @@ function Contacto() {
                 <span className="mb-1.5 block text-sm font-medium text-brand-ink">
                   Mensaje
                 </span>
-                <textarea
-                  name="message"
-                  value={form.message}
-                  onChange={handleChange}
-                  required
-                  rows={5}
-                  className={`${inputClass} resize-none`}
-                />
+<textarea
+                    name="message"
+                    value={form.message}
+                    onChange={handleChange}
+                    required
+                    rows={5}
+                    className={`${inputClass} resize-none`}
+                  />
               </label>
+
+              <DataConsentCheckbox
+                id="contact-consent"
+                context="contact"
+                checked={consent}
+                onChange={setConsent}
+              />
 
               {sent && (
                 <p
