@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express'
 import { contactSchema } from '../schemas/contact.schema.js'
 import { registerContactMessage } from '../services/contact.service.js'
+import { notifyContactMessage } from '../services/notification.service.js'
 import { ValidationError } from '../utils/httpError.js'
 
 export async function createContactHandler(
@@ -24,6 +25,8 @@ export async function createContactHandler(
   }
 
   const message = await registerContactMessage(result.data)
+
+  void notifyContactMessage(message)
 
   res.status(201).json(message)
 }
