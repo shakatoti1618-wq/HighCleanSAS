@@ -12,10 +12,21 @@ const links = [
   { to: '/contacto', label: 'Contacto' },
 ]
 
+const secondaryLinks = [
+  { to: '/trabaja-con-nosotros', label: 'Trabaja con nosotros' },
+  { to: '/politica-de-datos', label: 'Política de datos' },
+]
+
 function navLinkClass(isActive: boolean) {
   return isActive
     ? 'text-sm font-medium text-brand-turqDeep underline underline-offset-4'
     : 'text-sm font-medium text-slate-600 transition-colors hover:text-brand-turqDeep'
+}
+
+function secondaryLinkClass(isActive: boolean) {
+  return isActive
+    ? 'text-xs font-medium text-brand-turqDeep underline underline-offset-4'
+    : 'text-xs font-medium text-slate-500 transition-colors hover:text-brand-turqDeep'
 }
 
 function Navbar() {
@@ -84,6 +95,23 @@ function Navbar() {
         </div>
       </nav>
 
+      <div className="hidden border-t border-slate-100 bg-white/80 md:block">
+        <nav
+          className="mx-auto flex max-w-7xl items-center gap-7 px-4 py-2 sm:px-6 lg:px-8"
+          aria-label="Navegación secundaria"
+        >
+          {secondaryLinks.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              className={({ isActive }) => secondaryLinkClass(isActive)}
+            >
+              {link.label}
+            </NavLink>
+          ))}
+        </nav>
+      </div>
+
       {open && (
         <div className="border-t border-slate-100 bg-white/95 px-4 py-4 md:hidden">
           <ul className="flex flex-col gap-4">
@@ -108,6 +136,21 @@ function Navbar() {
                 Cotizar
               </Link>
             </li>
+            <li
+              className="border-t border-slate-100 pt-3"
+              aria-hidden="true"
+            />
+            {secondaryLinks.map((link) => (
+              <li key={link.to}>
+                <NavLink
+                  to={link.to}
+                  onClick={() => setOpen(false)}
+                  className={({ isActive }) => secondaryLinkClass(isActive)}
+                >
+                  {link.label}
+                </NavLink>
+              </li>
+            ))}
           </ul>
         </div>
       )}

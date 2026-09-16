@@ -1,3 +1,10 @@
+import { Link } from 'react-router-dom'
+
+const secondaryLinks = [
+  { to: '/trabaja-con-nosotros', label: 'Trabaja con nosotros' },
+  { to: '/politica-de-datos', label: 'Política de datos' },
+]
+
 function Footer() {
   const year = new Date().getFullYear()
 
@@ -21,6 +28,20 @@ function Footer() {
               High Clean<span className="text-brand-turqDeep">SAS</span>
             </span>
           </div>
+          <nav aria-label="Enlaces institucionales">
+            <ul className="flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:gap-5">
+              {secondaryLinks.map((link) => (
+                <li key={link.to}>
+                  <Link
+                    to={link.to}
+                    className="text-slate-500 transition-colors hover:text-brand-turqDeep"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
           <p className="text-sm text-slate-500">
             Redes sociales y otros datos: TODO: información pendiente de
             confirmar con High Clean SAS.
