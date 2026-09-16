@@ -13,6 +13,8 @@ const TEST_PASSWORD = 'test-admin-password-123'
 const ROLE_NAME = 'admin'
 
 beforeEach(async () => {
+  await prisma.user.deleteMany({ where: { id: TEST_USER_ID } })
+
   const role = await prisma.role.upsert({
     where: { name: ROLE_NAME },
     create: { name: ROLE_NAME },
