@@ -28,6 +28,16 @@ function listServices(context: ChatContext): string {
     .join('\n')
 }
 
+function listValues(context: ChatContext): string {
+  const values = context.company?.values
+  if (!values || values.length === 0) {
+    return 'Todavía no tengo los valores confirmados.'
+  }
+  return values
+    .map((value) => `- ${value.name}: ${value.description}`)
+    .join('\n')
+}
+
 function contactInfo(context: ChatContext): string {
   const company = context.company
   const channels: string[] = []
@@ -85,7 +95,7 @@ export class KnowledgeChatProvider implements ChatProvider {
       if (context.company.description) parts.push(context.company.description)
       if (context.company.mission) parts.push(`Misión: ${context.company.mission}`)
       if (context.company.vision) parts.push(`Visión: ${context.company.vision}`)
-      if (context.company.values) parts.push(`Valores: ${context.company.values}`)
+      parts.push(`Valores:\n${listValues(context)}`)
       if (parts.length === 1) {
         return `Espero poder darte más detalles de ${companyName} pronto. ${TO_CONTACT_HINT}`
       }
