@@ -23,6 +23,20 @@ export function errorHandler(
     return
   }
 
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    (error as { type?: string }).type === 'entity.parse.failed'
+  ) {
+    res.status(400).json({
+      error: {
+        message: 'La solicitud no contiene un JSON válido',
+        code: 'ValidationError',
+      },
+    })
+    return
+  }
+
   console.error('Error no controlado:', error)
   res.status(500).json({
     error: { message: 'Error interno del servidor', code: 'INTERNAL_ERROR' },
