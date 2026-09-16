@@ -1,0 +1,55 @@
+import { Router } from 'express'
+import {
+  createGalleryImageHandler,
+  createServiceHandler,
+  deleteGalleryImageHandler,
+  deleteJobHandler,
+  deleteMessageHandler,
+  deleteReviewHandler,
+  deleteServiceHandler,
+  getDashboardHandler,
+  getJobFileHandler,
+  listGalleryHandler,
+  listJobsHandler,
+  listMessagesHandler,
+  listReviewsHandler,
+  listServicesHandler,
+  markJobReviewedHandler,
+  markMessageReadHandler,
+  updateCompanyHandler,
+  updateReviewStatusHandler,
+  updateServiceHandler,
+} from '../controllers/admin.controller.js'
+import { requireAdmin } from '../middleware/requireAdmin.js'
+import { requireAuth } from '../middleware/requireAuth.js'
+
+const adminRouter = Router()
+
+adminRouter.use(requireAuth, requireAdmin)
+
+adminRouter.get('/dashboard', getDashboardHandler)
+adminRouter.patch('/company', updateCompanyHandler)
+
+adminRouter.get('/services', listServicesHandler)
+adminRouter.post('/services', createServiceHandler)
+adminRouter.patch('/services/:id', updateServiceHandler)
+adminRouter.delete('/services/:id', deleteServiceHandler)
+
+adminRouter.get('/reviews', listReviewsHandler)
+adminRouter.patch('/reviews/:id', updateReviewStatusHandler)
+adminRouter.delete('/reviews/:id', deleteReviewHandler)
+
+adminRouter.get('/messages', listMessagesHandler)
+adminRouter.patch('/messages/:id', markMessageReadHandler)
+adminRouter.delete('/messages/:id', deleteMessageHandler)
+
+adminRouter.get('/gallery', listGalleryHandler)
+adminRouter.post('/gallery', createGalleryImageHandler)
+adminRouter.delete('/gallery/:id', deleteGalleryImageHandler)
+
+adminRouter.get('/jobs', listJobsHandler)
+adminRouter.get('/jobs/:id/file', getJobFileHandler)
+adminRouter.patch('/jobs/:id', markJobReviewedHandler)
+adminRouter.delete('/jobs/:id', deleteJobHandler)
+
+export default adminRouter
