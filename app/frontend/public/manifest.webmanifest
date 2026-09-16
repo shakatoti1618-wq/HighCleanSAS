@@ -1,0 +1,22 @@
+{
+  "name": "High Clean SAS — Servicios de limpieza",
+  "short_name": "High Clean",
+  "description": "High Clean SAS — empresa de aseo y limpieza profesional. Información de la empresa, servicios y contacto.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#E3F7FA",
+  "theme_color": "#749D5B",
+  "icons": [
+    {
+      "src": "/logo-transparente.png",
+      "sizes": "533x360",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
