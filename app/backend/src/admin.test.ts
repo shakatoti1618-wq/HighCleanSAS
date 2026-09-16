@@ -3,6 +3,7 @@ import request from 'supertest'
 import { afterAll, afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { createApp } from './app.js'
 import { prisma } from './lib/prisma.js'
+import type { Prisma } from './generated/prisma/client.js'
 import { BCRYPT_ROUNDS } from './services/auth.service.js'
 
 const app = createApp()
@@ -61,12 +62,6 @@ beforeEach(async () => {
     ],
   })
 })
-
-async function login(email: string) {
-  return request(app)
-    .post('/api/v1/auth/login')
-    .send({ email, password: TEST_PASSWORD })
-}
 
 describe('Panel administrador', () => {
   it('devuelve 401 sin sesión', async () => {
@@ -346,7 +341,7 @@ describe('Empresa administrativa', () => {
           mission: saved.get('mission') as string | null,
           vision: saved.get('vision') as string | null,
           qualityPolicy: saved.get('qualityPolicy') as string | null,
-          values: saved.get('values') as unknown,
+          values: saved.get('values') as Prisma.InputJsonValue | undefined,
           phone: saved.get('phone') as string | null,
           whatsappNumber: saved.get('whatsappNumber') as string | null,
           email: saved.get('email') as string | null,
