@@ -1,11 +1,32 @@
 /// <reference types="vitest/config" />
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv, type Plugin } from 'vite'
+import { isProductionValidSiteUrl } from './scripts/seo-env.mjs'
+
+function seoEnvWarning(): Plugin {
+  return {
+    name: 'seo-env-warning',
+    configResolved(config) {
+      if (config.command !== 'build') return
+
+      const env = loadEnv(config.mode, config.root, ['VITE_'])
+      const raw = env.VITE_SITE_URL
+      if (!isProductionValidSiteUrl(raw)) {
+        const reason = raw
+          ? `VITE_SITE_URL="${raw}" no es una URL https válida.`
+          : 'VITE_SITE_URL no está definida.'
+        console.warn(
+          `[seo] ${reason} En producción (NODE_ENV=production) el prebuild falla si no es una URL https válida (ver scripts/generate-seo-files.mjs).`,
+        )
+      }
+    },
+  }
+}
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), seoEnvWarning()],
   server: {
     proxy: {
       '/api': 'http://localhost:3000',
