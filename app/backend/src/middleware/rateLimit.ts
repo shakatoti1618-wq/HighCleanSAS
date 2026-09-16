@@ -55,3 +55,17 @@ export const authLimiter = rateLimit({
     },
   },
 })
+
+export const jobsLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 3,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  skip: () => env.NODE_ENV === 'test',
+  message: {
+    error: {
+      message: 'Demasiadas postulaciones. Espera unos minutos.',
+      code: 'RATE_LIMIT',
+    },
+  },
+})
