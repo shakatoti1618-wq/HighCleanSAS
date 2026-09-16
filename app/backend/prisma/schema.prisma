@@ -38,7 +38,8 @@ model Company {
   description    String?
   mission        String?
   vision         String?
-  values         String?
+  values         Json?
+  qualityPolicy  String?
   phone          String?
   whatsappNumber String?
   email          String?
@@ -48,6 +49,7 @@ model Company {
   reviews        Review[]
   gallery        GalleryImage[]
   messages       ContactMessage[]
+  jobs           JobApplication[]
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 }
@@ -87,9 +89,40 @@ model ContactMessage {
   name      String
   email     String
   message   String
+  read      Boolean  @default(false)
   companyId String
   company   Company  @relation(fields: [companyId], references: [id])
   createdAt DateTime @default(now())
+
+  @@index([read])
+}
+
+enum JobApplicationStatus {
+  NEW
+  REVIEWED
+}
+
+model JobApplication {
+  id                    String               @id @default(uuid())
+  name                  String
+  position              String
+  email                 String
+  phone                 String
+  message               String?
+  status                JobApplicationStatus @default(NEW)
+  read                  Boolean              @default(false)
+  originalFileName      String
+  mimeType              String
+  fileSize              Int
+  fileData              Bytes
+  dataConsentAcceptedAt DateTime             @default(now())
+  companyId             String
+  company               Company              @relation(fields: [companyId], references: [id])
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+
+  @@index([status])
+  @@map("job_applications")
 }
 
 model GalleryImage {
