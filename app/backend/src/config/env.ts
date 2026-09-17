@@ -5,7 +5,7 @@ const DEFAULT_SESSION_SECRET = 'highclean-dev-session-secret-change-me-123'
 const DEFAULT_ADMIN_PASSWORD = 'change-me-admin-password-2026'
 const DEFAULT_NOTIFY_EMAIL = 'notify@highclean.local'
 
-const envSchema = z
+export const envSchema = z
   .object({
     NODE_ENV: z
       .enum(['development', 'test', 'production'])
@@ -45,6 +45,14 @@ const envSchema = z
         message:
           'ADMIN_PASSWORD no puede usar el valor de desarrollo en producción',
         path: ['ADMIN_PASSWORD'],
+      })
+    }
+    if (values.CORS_ORIGIN === '*') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          'CORS_ORIGIN no puede ser * en producción (deshabilita la protección CSRF del Módulo 15)',
+        path: ['CORS_ORIGIN'],
       })
     }
     if (!values.RESEND_API_KEY) {
