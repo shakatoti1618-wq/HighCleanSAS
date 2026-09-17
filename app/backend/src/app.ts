@@ -9,6 +9,7 @@ import {
   notFoundHandler,
 } from './middleware/error.middleware.js'
 import { generalLimiter } from './middleware/rateLimit.js'
+import { requireSameOrigin } from './middleware/requireSameOrigin.js'
 import apiRouter from './routes/index.js'
 
 const allowedOrigins =
@@ -21,7 +22,15 @@ export function createApp() {
 
   app.set('trust proxy', env.NODE_ENV === 'production' ? 1 : false)
 
-  app.use(helmet())
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          imgSrc: ["'self'", 'data:', 'https:'],
+        },
+      },
+    }),
+  )
   app.use(cors({ origin: allowedOrigins }))
   app.use(express.json({ limit: '100kb' }))
 
@@ -41,7 +50,7 @@ export function createApp() {
     }),
   )
 
-  app.use('/api/v1', generalLimiter, apiRouter)
+  app.use('/api/v1', generalLimiter, requireSameOrigin, apiRouter)
 
   app.use(notFoundHandler)
   app.use(errorHandler)
