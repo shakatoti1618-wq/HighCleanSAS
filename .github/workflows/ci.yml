@@ -1,0 +1,110 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend (lint · typecheck · test --coverage · build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: highclean
+          POSTGRES_PASSWORD: h1ghcl34n_dev
+          POSTGRES_DB: highclean
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U highclean"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://highclean:h1ghcl34n_dev@localhost:5432/highclean?schema=public
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 26
+        uses: actions/setup-node@v4
+        with:
+          node-version: '26'
+          cache: npm
+          cache-dependency-path: app/backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: app/backend
+
+      - name: Generate Prisma client
+        run: npm run db:generate
+        working-directory: app/backend
+
+      - name: Apply migrations
+        run: npm run db:deploy
+        working-directory: app/backend
+
+      - name: Lint
+        run: npm run lint
+        working-directory: app/backend
+
+      - name: Typecheck
+        run: npm run typecheck
+        working-directory: app/backend
+
+      - name: Test with coverage
+        run: npm run coverage
+        working-directory: app/backend
+
+      - name: Build
+        run: npm run build
+        working-directory: app/backend
+
+  frontend:
+    name: Frontend (lint · typecheck · test --coverage · build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 26
+        uses: actions/setup-node@v4
+        with:
+          node-version: '26'
+          cache: npm
+          cache-dependency-path: app/frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: app/frontend
+
+      - name: Lint
+        run: npm run lint
+        working-directory: app/frontend
+
+      - name: Typecheck
+        run: npm run typecheck
+        working-directory: app/frontend
+
+      - name: Test with coverage
+        run: npm run coverage
+        working-directory: app/frontend
+
+      - name: Build
+        run: npm run build
+        working-directory: app/frontend
