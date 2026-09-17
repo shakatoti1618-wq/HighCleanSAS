@@ -6,12 +6,22 @@ import {
 } from '../controllers/auth.controller.js'
 import { requireAuth } from '../middleware/requireAuth.js'
 import { authLimiter } from '../middleware/rateLimit.js'
+import {
+  noIndexHeaders,
+  noStoreHeaders,
+} from '../middleware/securityHeaders.js'
 
 const authRouter = Router()
 
-authRouter.post('/login', authLimiter, loginHandler)
+authRouter.post(
+  '/login',
+  noStoreHeaders,
+  noIndexHeaders,
+  authLimiter,
+  loginHandler,
+)
 
-authRouter.use(requireAuth)
+authRouter.use(noStoreHeaders, requireAuth)
 authRouter.get('/me', meHandler)
 authRouter.post('/logout', logoutHandler)
 

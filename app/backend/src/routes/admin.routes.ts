@@ -20,12 +20,16 @@ import {
   updateReviewStatusHandler,
   updateServiceHandler,
 } from '../controllers/admin.controller.js'
-import { requireAdmin } from '../middleware/requireAdmin.js'
 import { requireAuth } from '../middleware/requireAuth.js'
+import { requireAdmin } from '../middleware/requireAdmin.js'
+import {
+  noIndexHeaders,
+  noStoreHeaders,
+} from '../middleware/securityHeaders.js'
 
 const adminRouter = Router()
 
-adminRouter.use(requireAuth, requireAdmin)
+adminRouter.use(noStoreHeaders, noIndexHeaders, requireAuth, requireAdmin)
 
 adminRouter.get('/dashboard', getDashboardHandler)
 adminRouter.patch('/company', updateCompanyHandler)
