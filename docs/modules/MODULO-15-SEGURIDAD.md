@@ -52,6 +52,7 @@ helmet CSP → directives.imgSrc = ["'self'", 'data:', 'https:']   (JSON del bac
 - Session fixation: `sid` nuevo en cada login (el anterior queda invalidado).
 - Los endpoints admin y de login no se cachean (`no-store`) y se marcan como no indexables para robots.
 - `npm audit`: 4 high **dev-only** del CLI de Prisma (`prisma@7.10.0` → `@prisma/config@7.10.0` → `deepmerge-ts@7.1.5`; `prisma` → `mysql2@3.15.3`). **No** se ejecutó `npm audit fix --force` (obliga a downgrade breaking a Prisma 6). Runtime de producción: 0 vulnerabilidades. Frontend: 0 vulnerabilidades. Ver `src/security.test.ts` para cobertura.
+- **Ajuste pedido por el usuario tras el cierre**: `CORS_ORIGIN` **nunca** puede ser `*` en producción (anularía toda la protección CSRF del módulo). Ahora `env.ts` **rechaza `CORS_ORIGIN=*` en producción y el backend no arranca** (fail-closed en startup), con tests en `src/env.test.ts`.
 
 ## Testing
 - `npm test`: **63/63 tests** (13 archivos, secuencial) ✅. Nuevo `security.test.ts` (11 tests) ✅.
@@ -67,6 +68,9 @@ helmet CSP → directives.imgSrc = ["'self'", 'data:', 'https:']   (JSON del bac
 6. `test: add security regression tests for origin session and headers`
 7. `docs: add security module doc and ADR-005 for csrf session csp`
 8. `chore: document CORS_ORIGIN in backend env example`
+9. `feat: reject wildcard CORS_ORIGIN in production to keep csrf protection`
+10. `test: add env schema regression tests for production guards`
+11. `docs: document production rejection of wildcard cors origin`
 
 ## Pendientes / observaciones
 - **CSP de la SPA queda pendiente para el Módulo 17** (meta tag o headers del hosting del frontend) — ver ADR-005.
