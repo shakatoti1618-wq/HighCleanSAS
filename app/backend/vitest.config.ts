@@ -5,5 +5,6 @@ export default defineConfig({
     environment: 'node',
     include: ['src/**/*.test.ts'],
     fileParallelism: false,
+    env: { CORS_ORIGIN: 'http://localhost:5173' },
   },
 })
