@@ -19,6 +19,13 @@ export async function loginHandler(
 
   const user = await verifyCredentials(result.data.email, result.data.password)
 
+  await new Promise<void>((resolve, reject) => {
+    req.session.regenerate((error) => {
+      if (error) reject(error)
+      else resolve()
+    })
+  })
+
   req.session.user = {
     id: user.id,
     email: user.email,
