@@ -120,3 +120,20 @@ Todos los `/admin/*` exigen sesiÃ³n (`requireAuth`) y rol `admin` (`requireAdmin
 - **Env**: `src/config/env.ts` declara ambas con default de desarrollo (`notify-contact@highclean.local`, `notify-jobs@highclean.local`) y el guard de producciÃ³n exige que **ninguna** use el valor de dev (el backend no arranca). `.env.example` las documenta; `NOTIFY_EMAIL` quedÃ³ **en desuso** (una clave vieja en `.env` es ignorada por Zod, no rompe el arranque, pero deja de usarse).
 - **Estado real de High Clean SAS**: `NOTIFY_EMAIL_CONTACT` â†’ `highcleanclaient@gmail.com`. `NOTIFY_EMAIL_JOBS` â†’ **PENDIENTE** (correo nuevo por crear solo para hojas de vida); en producciÃ³n serÃ¡ obligatorio definirla.
 - **WhatsApp**: el seed (`prisma/seed.ts`) carga `whatsappNumber: '+573209498347'`; con ese dato el botÃ³n flotante del frontend aparece (condiciÃ³n en `WhatsAppButton.tsx`).
+---
+
+## Actualización — Identificación legal (razón social y NIT)
+
+Se completó la identificación legal de la empresa y se reemplazaron los TODOs de la página de política de datos que este módulo dejó "verbatim":
+
+- **Modelo Company**: campo nuevo 
+it String? (+ migración `20260918020517_add_company_nit`). **No** se agregó legalName: la razón social ya es 
+ame ("High Clean SAS"); un campo espejo podría desincronizarse.
+- **Seed**: 
+it: '901330960-1'.
+- **Panel admin**: 
+it editable (misma sección "Datos de contacto") con validación Zod de formato NNNNNNNNN-D (`/^\d{6,15}-\d$/`).
+- **Footer**: la línea de copyright muestra razón social + NIT (© {año} High Clean SAS — NIT 901330960-1).
+- **PoliticaDeDatos.tsx**: ahora usa useCompany() (antes era 100% estática). La sección 1 (Responsable del tratamiento) muestra razón social + NIT y correo/teléfono reales de Company; la dirección sigue como TODO porque no hay sede física única. La sección 6 (derechos del titular) también usa el correo real de Company. Mientras cargan los datos o si faltan, cae al TODO_TEXT.
+- Tests: backend company.test.ts (expone 
+it) y dmin.test.ts (PATCH de NIT válido + rechazo de NIT sin guion).
