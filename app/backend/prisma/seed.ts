@@ -53,6 +53,7 @@ const COMPANY_QUALITY_POLICY = `En nuestra empresa, nos comprometemos a mejorar 
 Así mismo, nos enfocamos en la capacitación constante de nuestro personal, para asegurar su desarrollo profesional y su alineación con las mejores prácticas. Nos comprometemos a cumplir con los requerimientos de nuestros clientes y a superar sus expectativas, trabajando de manera integral para brindar soluciones de calidad.`
 
 const COMPANY_PHONE = '+573209498347'
+const COMPANY_NIT = '901330960-1'
 const COMPANY_EMAIL = 'highcleanclaient@gmail.com'
 const COMPANY_SERVICE_CITIES = [
   'Bogotá',
@@ -110,6 +111,7 @@ async function main() {
             values: COMPANY_VALUES,
             whatsappNumber: '+573209498347',
             phone: COMPANY_PHONE,
+            nit: COMPANY_NIT,
             email: COMPANY_EMAIL,
             serviceCities: COMPANY_SERVICE_CITIES,
             schedules: COMPANY_SCHEDULES,
@@ -127,6 +129,7 @@ async function main() {
             values: COMPANY_VALUES,
             whatsappNumber: '+573209498347',
             phone: COMPANY_PHONE,
+            nit: COMPANY_NIT,
             email: COMPANY_EMAIL,
             serviceCities: COMPANY_SERVICE_CITIES,
             schedules: COMPANY_SCHEDULES,
