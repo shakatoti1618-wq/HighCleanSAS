@@ -51,6 +51,21 @@ function Empresa() {
     setSaved(false)
   }
 
+  const handleCities = (value: string) => {
+    setForm((previous) =>
+      previous
+        ? {
+            ...previous,
+            serviceCities: value
+              .split(',')
+              .map((city) => city.trim())
+              .filter(Boolean),
+          }
+        : previous,
+    )
+    setSaved(false)
+  }
+
   const handleValue = (
     index: number,
     key: keyof CompanyValue,
@@ -96,6 +111,10 @@ function Empresa() {
         email: form.email?.trim() || undefined,
         address: form.address?.trim() || undefined,
         schedules: form.schedules?.trim() || undefined,
+        serviceCities:
+          form.serviceCities && form.serviceCities.length > 0
+            ? form.serviceCities
+            : undefined,
       })
       resetCompanyCache()
       setSaved(true)
@@ -328,6 +347,24 @@ function Empresa() {
                 maxLength={300}
                 className={inputClass}
               />
+            </label>
+            <label className="block">
+              <span className="mb-1.5 block text-sm font-medium text-brand-ink">
+                Ciudades de cobertura
+              </span>
+              <input
+                type="text"
+                name="serviceCities"
+                value={form?.serviceCities?.join(', ') ?? ''}
+                onChange={(event) => handleCities(event.target.value)}
+                placeholder="Bogotá, Villavicencio, Medellín"
+                maxLength={400}
+                className={inputClass}
+              />
+              <span className="mt-1 block text-xs text-slate-500">
+                Separa las ciudades con coma. Se muestran en la página de
+                contacto y en el JSON-LD de SEO.
+              </span>
             </label>
             <label className="block lg:col-span-2">
               <span className="mb-1.5 block text-sm font-medium text-brand-ink">
