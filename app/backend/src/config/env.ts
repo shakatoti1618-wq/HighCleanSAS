@@ -3,7 +3,8 @@ import { z } from 'zod'
 
 const DEFAULT_SESSION_SECRET = 'highclean-dev-session-secret-change-me-123'
 const DEFAULT_ADMIN_PASSWORD = 'change-me-admin-password-2026'
-const DEFAULT_NOTIFY_EMAIL = 'notify@highclean.local'
+const DEFAULT_NOTIFY_EMAIL_CONTACT = 'notify-contact@highclean.local'
+const DEFAULT_NOTIFY_EMAIL_JOBS = 'notify-jobs@highclean.local'
 
 export const envSchema = z
   .object({
@@ -16,7 +17,11 @@ export const envSchema = z
     ADMIN_EMAIL: z.string().email().default('admin@highclean.local'),
     ADMIN_PASSWORD: z.string().min(12).default(DEFAULT_ADMIN_PASSWORD),
     RESEND_API_KEY: z.string().optional(),
-    NOTIFY_EMAIL: z.string().email().default(DEFAULT_NOTIFY_EMAIL),
+    NOTIFY_EMAIL_CONTACT: z
+      .string()
+      .email()
+      .default(DEFAULT_NOTIFY_EMAIL_CONTACT),
+    NOTIFY_EMAIL_JOBS: z.string().email().default(DEFAULT_NOTIFY_EMAIL_JOBS),
     DATABASE_URL: z
       .string()
       .min(1, 'DATABASE_URL es obligatorio (ver .env / .env.example)'),
@@ -62,11 +67,20 @@ export const envSchema = z
         path: ['RESEND_API_KEY'],
       })
     }
-    if (values.NOTIFY_EMAIL === DEFAULT_NOTIFY_EMAIL) {
+    if (values.NOTIFY_EMAIL_CONTACT === DEFAULT_NOTIFY_EMAIL_CONTACT) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'NOTIFY_EMAIL no puede usar el valor de desarrollo en producción',
-        path: ['NOTIFY_EMAIL'],
+        message:
+          'NOTIFY_EMAIL_CONTACT no puede usar el valor de desarrollo en producción',
+        path: ['NOTIFY_EMAIL_CONTACT'],
+      })
+    }
+    if (values.NOTIFY_EMAIL_JOBS === DEFAULT_NOTIFY_EMAIL_JOBS) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          'NOTIFY_EMAIL_JOBS no puede usar el valor de desarrollo en producción',
+        path: ['NOTIFY_EMAIL_JOBS'],
       })
     }
   })
