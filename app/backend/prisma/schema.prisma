@@ -42,6 +42,7 @@ model Company {
   qualityPolicy  String?
   phone          String?
   whatsappNumber String?
+  serviceCities  String[]
   email          String?
   address        String?
   schedules      String?
