@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react'
 import { motion } from 'motion/react'
 import Seo from '../components/Seo.tsx'
+import { useCompany } from '../hooks/useCompany.ts'
+import type { Company } from '../lib/api.ts'
 import { EASE } from '../lib/motion.ts'
 
 interface Section {
@@ -9,23 +11,31 @@ interface Section {
   body: ReactNode
 }
 
-const sections: Section[] = [
+const TODO_TEXT = 'TODO: información pendiente de confirmar con High Clean SAS'
+
+function buildSections(company: Company | null): Section[] {
+  const legalName = company?.name ?? 'High Clean SAS'
+  const contactEmail = company?.email ?? TODO_TEXT
+  const contactPhone = company?.phone ?? TODO_TEXT
+
+  return [
   {
     id: 'responsable',
     title: '1. Responsable del tratamiento',
     body: (
       <>
         <p className="text-slate-600">
-          High Clean SAS es responsable del tratamiento de los datos personales
-          que usted suministra a través de este sitio web.
+          {legalName}
+          {company?.nit ? `, NIT ${company.nit},` : ''} es responsable del
+          tratamiento de los datos personales que usted suministra a través de
+          este sitio web.
         </p>
         <ul className="mt-3 list-disc space-y-1.5 pl-5 text-slate-600">
+          <li>Correo de contacto: {contactEmail}</li>
           <li>
-            Correo de contacto: TODO — correo real de la empresa para temas de
-            datos personales
+            Dirección: TODO — dirección física o electrónica de la empresa
           </li>
-          <li>Dirección: TODO — dirección física o electrónica de la empresa</li>
-          <li>Teléfono: TODO — teléfono de contacto</li>
+          <li>Teléfono: {contactPhone}</li>
         </ul>
       </>
     ),
@@ -132,8 +142,7 @@ const sections: Section[] = [
           </li>
         </ul>
         <p className="mt-3 text-slate-600">
-          Para ejercer estos derechos, puede escribir a: TODO — correo de
-          contacto de la empresa.
+          Para ejercer estos derechos, puede escribir a: {contactEmail}
         </p>
       </>
     ),
@@ -149,9 +158,13 @@ const sections: Section[] = [
       </p>
     ),
   },
-]
+  ]
+}
 
 function PoliticaDeDatos() {
+  const { company } = useCompany()
+  const sections = buildSections(company)
+
   return (
     <section
       className="relative bg-white/60 py-24"
