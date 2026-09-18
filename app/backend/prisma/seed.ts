@@ -95,6 +95,7 @@ async function main() {
             vision: COMPANY_VISION,
             qualityPolicy: COMPANY_QUALITY_POLICY,
             values: COMPANY_VALUES,
+            whatsappNumber: '+573209498347',
           },
         })
       ).id
@@ -107,6 +108,7 @@ async function main() {
             vision: COMPANY_VISION,
             qualityPolicy: COMPANY_QUALITY_POLICY,
             values: COMPANY_VALUES,
+            whatsappNumber: '+573209498347',
           },
         })
       ).id
