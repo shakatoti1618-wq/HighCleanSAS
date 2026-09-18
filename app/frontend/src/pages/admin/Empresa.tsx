@@ -107,6 +107,7 @@ function Empresa() {
           description: value.description.trim(),
         })),
         phone: form.phone?.trim() || undefined,
+        nit: form.nit?.trim() || undefined,
         whatsappNumber: form.whatsappNumber?.trim() || undefined,
         email: form.email?.trim() || undefined,
         address: form.address?.trim() || undefined,
@@ -294,6 +295,20 @@ function Empresa() {
           </h2>
 
           <div className="mt-4 grid gap-5 lg:grid-cols-2">
+            <label className="block">
+              <span className="mb-1.5 block text-sm font-medium text-brand-ink">
+                NIT
+              </span>
+              <input
+                type="text"
+                name="nit"
+                value={form?.nit ?? ''}
+                onChange={(event) => handleField('nit', event.target.value)}
+                placeholder="901330960-1"
+                maxLength={20}
+                className={inputClass}
+              />
+            </label>
             <label className="block">
               <span className="mb-1.5 block text-sm font-medium text-brand-ink">
                 Teléfono
