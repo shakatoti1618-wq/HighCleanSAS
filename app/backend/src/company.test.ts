@@ -13,6 +13,7 @@ beforeEach(async () => {
     data: {
       id: COMPANY_ID,
       name: 'High Clean SAS',
+      nit: '901330960-1',
       serviceCities: ['Bogotá', 'Medellín'],
     },
   })
@@ -39,5 +40,6 @@ describe('GET /api/v1/company', () => {
     expect(response.body.whatsappNumber).toBeNull()
     expect(response.body).toHaveProperty('serviceCities')
     expect(response.body.serviceCities).toEqual(['Bogotá', 'Medellín'])
+    expect(response.body.nit).toBe('901330960-1')
   })
 })

@@ -321,6 +321,7 @@ describe('Empresa administrativa', () => {
     })
     if (company) {
       saved.set('description', company.description)
+      saved.set('nit', company.nit)
       saved.set('mission', company.mission)
       saved.set('vision', company.vision)
       saved.set('qualityPolicy', company.qualityPolicy)
@@ -343,6 +344,7 @@ describe('Empresa administrativa', () => {
         where: { id: company.id },
         data: {
           description: saved.get('description') as string | null,
+          nit: saved.get('nit') as string | null,
           mission: saved.get('mission') as string | null,
           vision: saved.get('vision') as string | null,
           qualityPolicy: saved.get('qualityPolicy') as string | null,
@@ -374,6 +376,23 @@ describe('Empresa administrativa', () => {
 
     expect(response.status).toBe(200)
     expect(response.body.serviceCities).toEqual(['Bogotá', 'Villavicencio'])
+  })
+
+  it('actualiza el NIT', async () => {
+    const response = await agent
+      .patch('/api/v1/admin/company')
+      .send({ nit: '901330960-1' })
+
+    expect(response.status).toBe(200)
+    expect(response.body.nit).toBe('901330960-1')
+  })
+
+  it('rechaza un NIT con formato inválido', async () => {
+    const response = await agent
+      .patch('/api/v1/admin/company')
+      .send({ nit: '901330960' })
+
+    expect(response.status).toBe(400)
   })
 
   it('rechaza una lista de ciudades vacía con 400', async () => {
