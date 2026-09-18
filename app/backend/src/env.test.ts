@@ -8,7 +8,8 @@ const productionBase = {
   ADMIN_EMAIL: 'admin@highclean.example',
   ADMIN_PASSWORD: 'super-secret-strong-2026',
   RESEND_API_KEY: 're_test_123',
-  NOTIFY_EMAIL: 'notify@highclean.example',
+  NOTIFY_EMAIL_CONTACT: 'contacto@highclean.example',
+  NOTIFY_EMAIL_JOBS: 'hv@highclean.example',
   DATABASE_URL:
     'postgresql://usuario:clave@localhost:5432/highclean?schema=public',
 }
@@ -56,6 +57,30 @@ describe('envSchema en producción', () => {
     if (!result.success) {
       expect(result.error.issues.map((issue) => issue.path.join('.'))).toContain(
         'RESEND_API_KEY',
+      )
+    }
+  })
+
+  it('rechaza la ausencia de NOTIFY_EMAIL_CONTACT', () => {
+    const { NOTIFY_EMAIL_CONTACT: _omitido, ...sinContacto } = productionBase
+    const result = envSchema.safeParse(sinContacto)
+
+    expect(result.success).toBe(false)
+    if (!result.success) {
+      expect(result.error.issues.map((issue) => issue.path.join('.'))).toContain(
+        'NOTIFY_EMAIL_CONTACT',
+      )
+    }
+  })
+
+  it('rechaza la ausencia de NOTIFY_EMAIL_JOBS', () => {
+    const { NOTIFY_EMAIL_JOBS: _omitido, ...sinJobs } = productionBase
+    const result = envSchema.safeParse(sinJobs)
+
+    expect(result.success).toBe(false)
+    if (!result.success) {
+      expect(result.error.issues.map((issue) => issue.path.join('.'))).toContain(
+        'NOTIFY_EMAIL_JOBS',
       )
     }
   })
