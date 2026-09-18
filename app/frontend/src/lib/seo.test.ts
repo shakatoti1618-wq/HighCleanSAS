@@ -16,6 +16,7 @@ afterEach(() => {
 const company: Company = {
   id: 'id',
   name: 'High Clean SAS',
+  nit: '901330960-1',
   description: 'Empresa de aseo y limpieza profesional.',
   mission: null,
   vision: null,
@@ -32,6 +33,7 @@ const company: Company = {
 const baseCompany: Company = {
   id: 'c1',
   name: 'High Clean SAS',
+  nit: '901330960-1',
   description: 'Empresa de limpieza',
   mission: null,
   vision: null,

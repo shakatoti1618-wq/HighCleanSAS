@@ -7,6 +7,7 @@ import type { Company } from '../lib/api.ts'
 const baseCompany: Company = {
   id: '13d5c1ef-3b57-4c18-9f0a-93d7b3e5c001',
   name: 'High Clean SAS',
+  nit: null,
   description: null,
   mission: null,
   vision: null,
