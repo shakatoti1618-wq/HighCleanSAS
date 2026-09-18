@@ -1,12 +1,21 @@
 import { Link } from 'react-router-dom'
+import { useCompany } from '../hooks/useCompany.ts'
 
 const secondaryLinks = [
   { to: '/trabaja-con-nosotros', label: 'Trabaja con nosotros' },
   { to: '/politica-de-datos', label: 'Política de datos' },
 ]
 
+const TODO_TEXT = 'TODO: información pendiente de confirmar con High Clean SAS'
+
 function Footer() {
   const year = new Date().getFullYear()
+  const { company } = useCompany()
+
+  const coverage =
+    company?.serviceCities && company.serviceCities.length > 0
+      ? company.serviceCities.join(', ')
+      : TODO_TEXT
 
   return (
     <footer
@@ -43,8 +52,7 @@ function Footer() {
             </ul>
           </nav>
           <p className="text-sm text-slate-500">
-            Redes sociales y otros datos: TODO: información pendiente de
-            confirmar con High Clean SAS.
+            Ciudades de cobertura: {coverage}
           </p>
         </div>
         <p className="pt-8 text-sm text-slate-500">

@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react'
-import { CheckCircle2, Loader2, Mail, MapPin, Phone } from 'lucide-react'
+import { CheckCircle2, Clock, Loader2, Map, Mail, MapPin, Phone } from 'lucide-react'
 import { motion } from 'motion/react'
 import DataConsentCheckbox from '../components/DataConsentCheckbox.tsx'
 import Seo from '../components/Seo.tsx'
@@ -8,6 +8,9 @@ import { EASE } from '../lib/motion.ts'
 import { sendContactMessage } from '../lib/api.ts'
 
 const TODO_TEXT = 'TODO: información pendiente de confirmar con High Clean SAS'
+
+const CONTACT_SUBTITLE =
+  'Elige el canal que prefieras y te responderemos a la brevedad.'
 
 const inputClass =
   'w-full rounded-sm border border-slate-200 bg-white px-4 py-3 text-slate-800 placeholder:text-slate-400 transition-shadow focus:border-transparent focus:outline-none focus:ring-2 focus:ring-brand-turq'
@@ -72,6 +75,11 @@ function Contacto() {
     return value ?? 'pendiente de confirmar'
   }
 
+  const coverageCities =
+    company?.serviceCities && company.serviceCities.length > 0
+      ? company.serviceCities.join(', ')
+      : 'pendiente de confirmar'
+
   return (
     <section
       className="relative bg-white/60 py-24"
@@ -101,7 +109,7 @@ function Contacto() {
               Contacto
             </h1>
             <p className="mb-10 max-w-lg leading-relaxed text-slate-600">
-              {TODO_TEXT}
+              {company?.phone || company?.email ? CONTACT_SUBTITLE : TODO_TEXT}
             </p>
 
             <address className="mb-10 space-y-5 not-italic">
@@ -118,6 +126,28 @@ function Contacto() {
                   </span>
                 </p>
               ))}
+              <p className="flex items-center gap-4">
+                <span
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm border border-brand-turq/30 bg-brand-turq/10"
+                  aria-hidden="true"
+                >
+                  <Map className="h-5 w-5 text-brand-turqDeep" />
+                </span>
+                <span className="text-brand-ink">
+                  Cobertura: {coverageCities}
+                </span>
+              </p>
+              <p className="flex items-center gap-4">
+                <span
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm border border-brand-turq/30 bg-brand-turq/10"
+                  aria-hidden="true"
+                >
+                  <Clock className="h-5 w-5 text-brand-turqDeep" />
+                </span>
+                <span className="whitespace-pre-line text-brand-ink">
+                  Horarios: {company?.schedules ?? 'pendiente de confirmar'}
+                </span>
+              </p>
             </address>
           </motion.div>
 
