@@ -47,6 +47,17 @@ export const updateCompanySchema = z
         'El número de WhatsApp solo puede contener números, +, -, espacios y paréntesis',
       )
       .optional(),
+    serviceCities: z
+      .array(
+        z
+          .string()
+          .trim()
+          .min(1, 'El nombre de una ciudad no puede estar vacío')
+          .max(80, 'El nombre de una ciudad no puede superar los 80 caracteres'),
+      )
+      .min(1, 'Agrega al menos una ciudad de cobertura')
+      .max(20, 'Máximo 20 ciudades')
+      .optional(),
     email: z.string().trim().email('Ingresa un correo válido').optional(),
     address: z.string().trim().max(300, 'Máximo 300 caracteres').optional(),
     schedules: z.string().trim().max(1000, 'Máximo 1000 caracteres').optional(),
