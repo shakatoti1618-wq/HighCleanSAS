@@ -12,6 +12,13 @@ export function absoluteUrl(path: string): string | null {
   return new URL(path, siteUrl).toString()
 }
 
+export interface OpeningHoursSpec {
+  '@type': 'OpeningHoursSpecification'
+  dayOfWeek: string[]
+  opens: string
+  closes: string
+}
+
 interface LocalBusiness {
   '@context': 'https://schema.org'
   '@type': string
@@ -22,6 +29,8 @@ interface LocalBusiness {
   telephone?: string
   email?: string
   address?: { '@type': 'PostalAddress'; streetAddress: string }
+  areaServed?: { '@type': 'City'; name: string }[]
+  openingHoursSpecification?: OpeningHoursSpec[]
 }
 
 interface ReviewBlock extends LocalBusiness {
@@ -58,8 +67,143 @@ export function localBusinessJson(company: Company): LocalBusiness | null {
       streetAddress: company.address,
     }
   }
+  if (company.serviceCities && company.serviceCities.length > 0) {
+    block.areaServed = company.serviceCities.map((name) => ({
+      '@type': 'City',
+      name,
+    }))
+  }
+  const openingHours = openingHoursFromSchedules(company.schedules)
+  if (openingHours) block.openingHoursSpecification = openingHours
 
   return block
+}
+
+const WEEK_DAYS = [
+  { key: 'lunes', schema: 'Monday' },
+  { key: 'martes', schema: 'Tuesday' },
+  { key: 'miercoles', schema: 'Wednesday' },
+  { key: 'jueves', schema: 'Thursday' },
+  { key: 'viernes', schema: 'Friday' },
+  { key: 'sabado', schema: 'Saturday' },
+  { key: 'domingo', schema: 'Sunday' },
+] as const
+
+const DAY_BY_KEY = new Map<string, string>(
+  WEEK_DAYS.map((day) => [day.key, day.schema]),
+)
+
+function normalize(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+}
+
+function schemaDay(key: string): string | undefined {
+  return DAY_BY_KEY.get(key)
+}
+
+function parseDaysPart(part: string): string[] | null {
+  const text = normalize(part).replace(/^(de|desde)\s+/, '')
+  const segments = text
+    .split(/\s+(?:y|and)\s+|[,;]/)
+    .map((segment) => segment.trim())
+    .filter(Boolean)
+
+  const days: string[] = []
+  for (const segment of segments) {
+    const match = segment.match(/^(\w+)(?:\s+a\s+(\w+))?$/)
+    if (!match) return null
+
+    const from = schemaDay(match[1] ?? '')
+    if (!from) return null
+
+    const to = match[2] ? schemaDay(match[2]) : undefined
+    if (match[2] && !to) return null
+
+    if (to) {
+      const fromIndex = WEEK_DAYS.findIndex((day) => day.schema === from)
+      const toIndex = WEEK_DAYS.findIndex((day) => day.schema === to)
+      if (fromIndex < 0 || toIndex < 0 || fromIndex > toIndex) return null
+      days.push(...WEEK_DAYS.slice(fromIndex, toIndex + 1).map((day) => day.schema))
+    } else {
+      days.push(from)
+    }
+  }
+
+  if (days.length === 0) return null
+  return [...new Set(days)]
+}
+
+function parseHour(raw: string): string | null {
+  const match = raw.toLowerCase().match(/^(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)?$/)
+  if (!match) return null
+
+  const hour = Number(match[1])
+  const minute = Number(match[2])
+  const meridian = match[3]
+
+  if (!Number.isInteger(hour) || hour < 0 || hour > 23) return null
+  if (!Number.isInteger(minute) || minute < 0 || minute > 59) return null
+
+  let hour24 = hour
+  if (meridian) {
+    if (meridian.startsWith('p')) {
+      hour24 = hour === 12 ? 12 : hour + 12
+    } else {
+      hour24 = hour === 12 ? 0 : hour
+    }
+  }
+
+  const hh = String(hour24).padStart(2, '0')
+  const mm = String(minute).padStart(2, '0')
+  return `${hh}:${mm}`
+}
+
+function parseScheduleLine(line: string): OpeningHoursSpec | null {
+  const [daysPart, ...rest] = line.split(':')
+  if (!daysPart || rest.length === 0) return null
+
+  const dayOfWeek = parseDaysPart(daysPart)
+  if (!dayOfWeek) return null
+
+  const timePart = rest.join(':')
+  const match = timePart.match(
+    /(\d{1,2}:\d{2}\s*[ap]?\.?m?\.?)\s+(?:de\s+)?a\s+(\d{1,2}:\d{2}\s*[ap]?\.?m?\.?)/,
+  )
+  if (!match) return null
+
+  const opens = parseHour(match[1] ?? '')
+  const closes = parseHour(match[2] ?? '')
+  if (!opens || !closes) return null
+
+  return {
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek,
+    opens,
+    closes,
+  }
+}
+
+export function openingHoursFromSchedules(
+  schedules: string | null | undefined,
+): OpeningHoursSpec[] | null {
+  if (!schedules) return null
+
+  const lines = schedules
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+
+  const specs: OpeningHoursSpec[] = []
+  for (const line of lines) {
+    const spec = parseScheduleLine(line)
+    if (spec) specs.push(spec)
+  }
+
+  return specs.length > 0 ? specs : null
 }
 
 function toIsoDate(value: string): string | undefined {
