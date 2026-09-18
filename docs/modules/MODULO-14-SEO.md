@@ -72,3 +72,14 @@ Commits separados por responsabilidad: helpers de validaciÃ³n y su test â†’ gene
 - **Cambiar la URL base**: `VITE_SITE_URL` en `.env.local`/`.env.production` (nunca commitear valores reales en `.env`).
 - **Prerender/SSR futuro**: las metas ya estÃ¡n centralizadas en `<Seo>`; portarlas a SSR es directo. El JSON-LD sigue el endpooint pÃºblico, no requiere backend nuevo.
 - **M18**: con dominio en mano, verificar `robots.txt`/`sitemap.xml` desplegados, Google Search Console â†’ verificaciÃ³n â†’ envÃ­o de sitemap â†’ solicitud de indexaciÃ³n â†’ seguimiento. Publicar no garantiza indexaciÃ³n inmediata.
+---
+
+## Actualización — Cobertura de ciudades y horarios estructurados
+
+Tras el cierre del módulo se enriqueció el JSON-LD de LocalBusiness con datos reales de la empresa (field serviceCities nuevo en Company + phone, email y schedules ya cargados en seed):
+
+- **reaServed**: lista de las ciudades de cobertura ("Bogotá, Villavicencio, Bucaramanga, Medellín, Cartagena, Fusagasugá") como { '@type': 'City', name }. Es la propiedad de Schema.org correcta para un negocio sin sede única que atiende varias ciudades (se mantiene ddress null porque no hay oficina física única).
+- **openingHoursSpecification**: se genera con un **mini-parser tolerante** (openingHoursFromSchedules en src/lib/seo.ts) que interpreta el texto libre de schedules ("Lunes a viernes: 8:00 am a 5:00 pm\nSábado y domingo: 8:00 am a 12:00 pm") y lo convierte a días (dayOfWeek) y horas 24h (opens/closes) de Schema.org. Google usa esta estructura para mostrar "abierto ahora" en resultados de búsqueda.
+- **Fallo seguro (regla D2)**: si el propietario edita schedules en el panel admin a un formato que el parser no reconoce (p. ej. sin el patrón "de X a Y"), el JSON-LD **omite** openingHoursSpecification pero no rompe nada más de la página ni del bloque (teléfono, correo, área de servicio se mantienen). Cubierto por tests (seo.test.ts).
+- **Admin**: serviceCities editable desde el panel (input de texto separado por comas) — misma validación Zod que el resto (min 1, max 20, cada ciudad = 80 caracteres).
+- Tests añadidos/post cierre: frontend seo.test.ts (bloque LocalBusiness + parser + fallo seguro), backend chat.test.ts (contacto y horario con datos reales), company.test.ts (exposición de serviceCities) y dmin.test.ts (PATCH ciudades y rechazo de lista vacía).
