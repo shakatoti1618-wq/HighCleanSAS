@@ -6,6 +6,7 @@ export interface CompanyValue {
 export interface Company {
   id: string
   name: string
+  nit: string | null
   description: string | null
   mission: string | null
   vision: string | null

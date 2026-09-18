@@ -53,6 +53,7 @@ export interface AdminDashboard {
 }
 
 export interface CompanyUpdateInput {
+  nit?: string
   description?: string
   mission?: string
   vision?: string
