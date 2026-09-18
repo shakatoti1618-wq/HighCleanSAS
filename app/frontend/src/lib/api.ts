@@ -16,6 +16,7 @@ export interface Company {
   email: string | null
   address: string | null
   schedules: string | null
+  serviceCities: string[] | null
 }
 
 export interface Service {

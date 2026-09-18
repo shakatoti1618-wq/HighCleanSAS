@@ -63,6 +63,7 @@ export interface CompanyUpdateInput {
   email?: string
   address?: string
   schedules?: string
+  serviceCities?: string[]
 }
 
 async function request<T>(
