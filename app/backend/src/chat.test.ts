@@ -7,6 +7,9 @@ const app = createApp()
 
 const COMPANY_ID = '13d5c1ef-3b57-4c18-9f0a-93d7b3e5c001'
 
+const REAL_SCHEDULES =
+  'Lunes a viernes: 8:00 am a 5:00 pm\nSábado y domingo: 8:00 am a 12:00 pm'
+
 beforeEach(async () => {
   await prisma.contactMessage.deleteMany()
   await prisma.review.deleteMany()
@@ -17,7 +20,10 @@ beforeEach(async () => {
     data: {
       id: COMPANY_ID,
       name: 'High Clean SAS',
-      schedules: 'Lunes a viernes de 8:00 a 18:00',
+      phone: '+573209498347',
+      whatsappNumber: '+573209498347',
+      email: 'highcleanclaient@gmail.com',
+      schedules: REAL_SCHEDULES,
     },
   })
   await prisma.service.createMany({
@@ -54,7 +60,18 @@ describe('POST /api/v1/chat', () => {
       .send({ message: '¿Cuál es su horario de atención?' })
 
     expect(response.status).toBe(200)
-    expect(response.body.response).toContain('Lunes a viernes de 8:00 a 18:00')
+    expect(response.body.response).toContain(REAL_SCHEDULES)
+  })
+
+  it('responde contactos reales sin caer en el fallback', async () => {
+    const response = await request(app)
+      .post('/api/v1/chat')
+      .send({ message: '¿Cómo los contacto?' })
+
+    expect(response.status).toBe(200)
+    expect(response.body.response).toContain('+573209498347')
+    expect(response.body.response).toContain('highcleanclaient@gmail.com')
+    expect(response.body.response).not.toContain('no tengo los datos de contacto')
   })
 
   it('no inventa precios y recomienda cotización directa', async () => {

@@ -10,7 +10,11 @@ const COMPANY_ID = '13d5c1ef-3b57-4c18-9f0a-93d7b3e5c001'
 beforeEach(async () => {
   await prisma.company.deleteMany()
   await prisma.company.create({
-    data: { id: COMPANY_ID, name: 'High Clean SAS' },
+    data: {
+      id: COMPANY_ID,
+      name: 'High Clean SAS',
+      serviceCities: ['Bogotá', 'Medellín'],
+    },
   })
 })
 
@@ -33,5 +37,7 @@ describe('GET /api/v1/company', () => {
     expect(response.body).toHaveProperty('values')
     expect(response.body).toHaveProperty('whatsappNumber')
     expect(response.body.whatsappNumber).toBeNull()
+    expect(response.body).toHaveProperty('serviceCities')
+    expect(response.body.serviceCities).toEqual(['Bogotá', 'Medellín'])
   })
 })

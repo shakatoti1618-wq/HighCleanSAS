@@ -29,7 +29,11 @@ beforeEach(async () => {
   await prisma.company.deleteMany({ where: { id: TEST_COMPANY_ID } })
 
   const company = await prisma.company.create({
-    data: { id: TEST_COMPANY_ID, name: TEST_COMPANY_NAME },
+    data: {
+      id: TEST_COMPANY_ID,
+      name: TEST_COMPANY_NAME,
+      serviceCities: [],
+    },
   })
   companyId = company.id
 
@@ -326,6 +330,7 @@ describe('Empresa administrativa', () => {
       saved.set('email', company.email)
       saved.set('address', company.address)
       saved.set('schedules', company.schedules)
+      saved.set('serviceCities', company.serviceCities)
     }
   })
 
@@ -347,6 +352,7 @@ describe('Empresa administrativa', () => {
           email: saved.get('email') as string | null,
           address: saved.get('address') as string | null,
           schedules: saved.get('schedules') as string | null,
+          serviceCities: saved.get('serviceCities') as string[],
         },
       })
     }
@@ -359,6 +365,23 @@ describe('Empresa administrativa', () => {
 
     expect(response.status).toBe(200)
     expect(response.body.description).toBe('Nueva descripción de prueba')
+  })
+
+  it('actualiza las ciudades de cobertura', async () => {
+    const response = await agent
+      .patch('/api/v1/admin/company')
+      .send({ serviceCities: ['Bogotá', 'Villavicencio'] })
+
+    expect(response.status).toBe(200)
+    expect(response.body.serviceCities).toEqual(['Bogotá', 'Villavicencio'])
+  })
+
+  it('rechaza una lista de ciudades vacía con 400', async () => {
+    const response = await agent
+      .patch('/api/v1/admin/company')
+      .send({ serviceCities: [] })
+
+    expect(response.status).toBe(400)
   })
 
   it('rechaza un cuerpo vacío con 400', async () => {
