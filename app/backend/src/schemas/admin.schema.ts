@@ -16,6 +16,14 @@ export const companyValueSchema = z.object({
 
 export const updateCompanySchema = z
   .object({
+    nit: z
+      .string()
+      .trim()
+      .regex(
+        /^\d{6,15}-\d$/,
+        'El NIT debe tener el formato 901330960-1 (dígitos, guion, dígito de verificación)',
+      )
+      .optional(),
     description: z.string().trim().max(5000, 'Máximo 5000 caracteres').optional(),
     mission: z.string().trim().max(5000, 'Máximo 5000 caracteres').optional(),
     vision: z.string().trim().max(5000, 'Máximo 5000 caracteres').optional(),
