@@ -52,6 +52,19 @@ Nos comprometemos con la sostenibilidad y el desarrollo constante, buscando siem
 const COMPANY_QUALITY_POLICY = `En nuestra empresa, nos comprometemos a mejorar continuamente el desempeño de nuestros servicios, a través de una planificación adecuada, un riguroso seguimiento y control de nuestros procesos. Aplicamos estrictos estándares de seguridad y salud en el trabajo, así como de seguridad industrial, garantizando un entorno seguro tanto para nuestros colaboradores como para nuestros clientes.
 Así mismo, nos enfocamos en la capacitación constante de nuestro personal, para asegurar su desarrollo profesional y su alineación con las mejores prácticas. Nos comprometemos a cumplir con los requerimientos de nuestros clientes y a superar sus expectativas, trabajando de manera integral para brindar soluciones de calidad.`
 
+const COMPANY_PHONE = '+573209498347'
+const COMPANY_EMAIL = 'highcleanclaient@gmail.com'
+const COMPANY_SERVICE_CITIES = [
+  'Bogotá',
+  'Villavicencio',
+  'Bucaramanga',
+  'Medellín',
+  'Cartagena',
+  'Fusagasugá',
+]
+const COMPANY_SCHEDULES =
+  'Lunes a viernes: 8:00 am a 5:00 pm\nSábado y domingo: 8:00 am a 12:00 pm'
+
 async function seedAdminUser() {
   const adminEmail = env.ADMIN_EMAIL.toLowerCase()
 
@@ -96,6 +109,10 @@ async function main() {
             qualityPolicy: COMPANY_QUALITY_POLICY,
             values: COMPANY_VALUES,
             whatsappNumber: '+573209498347',
+            phone: COMPANY_PHONE,
+            email: COMPANY_EMAIL,
+            serviceCities: COMPANY_SERVICE_CITIES,
+            schedules: COMPANY_SCHEDULES,
           },
         })
       ).id
@@ -109,6 +126,10 @@ async function main() {
             qualityPolicy: COMPANY_QUALITY_POLICY,
             values: COMPANY_VALUES,
             whatsappNumber: '+573209498347',
+            phone: COMPANY_PHONE,
+            email: COMPANY_EMAIL,
+            serviceCities: COMPANY_SERVICE_CITIES,
+            schedules: COMPANY_SCHEDULES,
           },
         })
       ).id
