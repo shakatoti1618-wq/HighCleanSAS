@@ -20,9 +20,13 @@ export interface ApplicationNotificationData {
 
 const provider: EmailProvider = new ResendEmailProvider()
 
-async function sendNotification(subject: string, text: string): Promise<void> {
+async function sendNotification(
+  to: string,
+  subject: string,
+  text: string,
+): Promise<void> {
   try {
-    await provider.send({ to: env.NOTIFY_EMAIL, subject, text })
+    await provider.send({ to, subject, text })
   } catch (error) {
     console.warn(
       `Notificación de correo omitida (${subject}). El registro ya se guardó en la BD y la respuesta al usuario prosigue. Motivo: ${
@@ -34,6 +38,7 @@ async function sendNotification(subject: string, text: string): Promise<void> {
 
 export function notifyContactMessage(message: ContactNotificationData) {
   return sendNotification(
+    env.NOTIFY_EMAIL_CONTACT,
     'Nuevo mensaje del sitio — High Clean SAS',
     [
       'Nuevo mensaje recibido desde el formulario de contacto del sitio web:',
@@ -62,6 +67,7 @@ export function notifyJobApplication(application: ApplicationNotificationData) {
   lines.push('La hoja de vida solo está disponible de forma segura en el panel.')
 
   return sendNotification(
+    env.NOTIFY_EMAIL_JOBS,
     'Nueva postulación — High Clean SAS',
     lines.join('\n'),
   )
