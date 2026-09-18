@@ -103,12 +103,20 @@ Todos los `/admin/*` exigen sesión (`requireAuth`) y rol `admin` (`requireAdmin
 ## Testing
 - Backend: 11 archivos / **51 tests** ✅ (14 nuevos: admin 12 + jobs 11 + email 1). Una corrida de tests borra la empresa real → recuperar con `npm run db:seed` (las suites crean y limpian su propia empresa dedicada para no depender del seed ni de otras suites).
 - Frontend: **20 tests** ✅ (4 nuevos) + lint + typecheck + build OK.
-- Smoke real: panel (login → resumen/empresa → nuevos mensajes/servicios) y postulación con PDF guardada en BD; correo Resend verificado cuando `RESEND_API_KEY` está configurada (en dev usar el correo dueño de la key como `NOTIFY_EMAIL`).
+- Smoke real: panel (login → resumen/empresa → nuevos mensajes/servicios) y postulación con PDF guardada en BD; correo Resend verificado cuando `RESEND_API_KEY` está configurada (en dev usar el correo dueño de la key en `NOTIFY_EMAIL_CONTACT`/`NOTIFY_EMAIL_JOBS`).
 
 ## Cómo modificar
 - **Cambiar el texto del consentimiento**: `DataConsentCheckbox` (frontend) y, si cambia el texto, revisar `PENDIENTE-LEGAL-PRELANZAMIENTO.md` (los consentimientos viejos dejan de ser válidos).
 - **Rellenar datos reales de contacto**: admin → Empresa, y reemplazar los TODOs de `PoliticaDeDatos.tsx`.
 - **Límites de la subida**: `MAX_FILE_SIZE` y `ALLOWED_MIME` en `src/middleware/upload.ts`.
-- **Email**: configurar `RESEND_API_KEY` y `NOTIFY_EMAIL`; al tener dominio (M17) usar sender propio.
+- **Email**: configurar `RESEND_API_KEY` más `NOTIFY_EMAIL_CONTACT` (cotizaciones) y `NOTIFY_EMAIL_JOBS` (hojas de vida); al tener dominio (M17) usar sender propio.
 - **Nuevo rol admin**: el guard `requireAdmin` comprueba `role.name === 'admin'`.
 - **Subida real de imágenes de galería**: prevista para Módulo 17 (hoy se agregan por URL).
+
+## Actualización — NOTIFY_EMAIL único → NOTIFY_EMAIL_CONTACT / NOTIFY_EMAIL_JOBS
+
+- **Qué cambió**: antes `NOTIFY_EMAIL` (única) avisaba tanto cotizaciones como postulaciones al mismo correo. Ahora hay dos variables: `NOTIFY_EMAIL_CONTACT` (solo `ContactMessage` → cotizaciones/contacto) y `NOTIFY_EMAIL_JOBS` (solo `JobApplication` → hojas de vida), porque cada caso va a un correo distinto.
+- **Dónde se decide el destinatario**: `src/services/notification.service.ts` (`sendNotification` recibe el `to` por evento). El registro del mensaje/postulación se guarda SIEMPRE en la BD; el correo es una notificación adicional que nunca bloquea la respuesta (try/catch + `console.warn`).
+- **Env**: `src/config/env.ts` declara ambas con default de desarrollo (`notify-contact@highclean.local`, `notify-jobs@highclean.local`) y el guard de producción exige que **ninguna** use el valor de dev (el backend no arranca). `.env.example` las documenta; `NOTIFY_EMAIL` quedó **en desuso** (una clave vieja en `.env` es ignorada por Zod, no rompe el arranque, pero deja de usarse).
+- **Estado real de High Clean SAS**: `NOTIFY_EMAIL_CONTACT` → `highcleanclaient@gmail.com`. `NOTIFY_EMAIL_JOBS` → **PENDIENTE** (correo nuevo por crear solo para hojas de vida); en producción será obligatorio definirla.
+- **WhatsApp**: el seed (`prisma/seed.ts`) carga `whatsappNumber: '+573209498347'`; con ese dato el botón flotante del frontend aparece (condición en `WhatsAppButton.tsx`).
