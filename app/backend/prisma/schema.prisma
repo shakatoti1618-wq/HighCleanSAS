@@ -35,6 +35,7 @@ model Session {
 model Company {
   id             String           @id @default(uuid())
   name           String
+  nit            String?
   description    String?
   mission        String?
   vision         String?
