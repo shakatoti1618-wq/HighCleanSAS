@@ -56,7 +56,9 @@ function Footer() {
           </p>
         </div>
         <p className="pt-8 text-sm text-slate-500">
-          © {year} High Clean SAS. Todos los derechos reservados.
+          © {year} {company?.name ?? 'High Clean SAS'}
+          {company?.nit ? ` — NIT ${company.nit}` : ''}. Todos los derechos
+          reservados.
         </p>
       </div>
     </footer>
