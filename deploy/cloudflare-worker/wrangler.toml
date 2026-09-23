@@ -1,0 +1,12 @@
+name = "highclean-api-proxy"
+main = "worker.ts"
+compatibility_date = "2026-09-01"
+
+workers_dev = false
+
+routes = [
+  { pattern = "highcleansas.com/api/*", zone_id = "<TU_ZONE_ID_DE_CLOUDFLARE>" }
+]
+
+[vars]
+BACKEND_ORIGIN = "https://<TU-SERVICIO>.onrender.com"
