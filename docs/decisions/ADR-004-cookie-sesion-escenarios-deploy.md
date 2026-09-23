@@ -48,3 +48,40 @@ Requiere cumplir **cuatro condiciones** a la vez; si falta una, el login "funcio
 - Login funcional en el escenario A sin configuración adicional; en B basta un cambio acotado y documentado en Módulo 17.
 - El caso B queda registrado como riesgo de configuración, no de código.
 - `SameSite=Lax` mitiga CSRF en mismo-origen; si en Módulo 17 se pasa a `SameSite=None` (escenario B), la superficie CSRF aumenta y debe revisarse (perspectiva Módulo 15 — Seguridad).
+
+---
+
+## Resolución en Módulo 17 — Deploy (2026-09-23): se elige el Escenario A
+
+### Decisión
+
+- **Arquitectura final: Escenario A — mismo origen** (confirmada con Jonathan).
+  Frontend SPA en **Cloudflare Pages** (`https://highcleansas.com`) + **Worker de
+  Cloudflare** que proxea `/api/*` al backend **Node/Express en Render** + **Postgres
+  en Neon** (detalle y justificación en `docs/deployment/provider-comparison.md` y
+  `docs/deployment/GUIA-DEPLOY.md`).
+- El navegador solo ve **un origen**: no se toca la cookie (`sameSite:'lax'`,
+  `secure:'auto'`, `httpOnly`), no se multiplica el CORS (`CORS_ORIGIN=https://highcleansas.com`,
+  exacto, nunca `*`) y **no se añade `credentials: true`** a `cors()`.
+- CSRF (`requireSameOrigin` del Módulo 15) sigue vigente con `SameSite=Lax` y el origen
+  exacto configurado; la validación de `Origin` la recibe íntegra en el backend porque el
+  Worker reenvía la cabecera original del navegador.
+- En producción `secure` se activa por HTTPS (TLS emitido por Cloudflare Pages/Worker);
+  en dev local (`http://localhost`) queda apagado, según el comportamiento ya acordado.
+
+### Caso B (orígenes distintos) queda documentado y NO aplicado
+
+- La acción diferida de este ADR se **resuelve a favor de no cambiarla**: no hay
+  `sameSite:'none'`, ni `cors({ credentials: true })`, ni necesidad de `credentials:'include'`
+  en cliente para origen cruzado.
+- Si algún día se quisiera separar frontend y API en dominios distintos, aplicar las
+  cuatro condiciones de la sección "Escenario B" y revalidar CSRF.
+
+### Consecuencias de la resolución
+
+- Cero cambios de código de sesión/CORS/CSRF; todo se declara en configuración de deploy
+  (ver GUIA-DEPLOY.md y `.env.production.example`).
+- Riesgo operativo asumido: el Worker de Cloudflare reenviará `Set-Cookie` tal cual de
+  Render al navegador (same-origin → aceptada). La precedencia de rutas
+  `highcleansas.com/api/*` debe verificarse en el dashboard de Cloudflare (detalle y
+  resguardo Pages Function en GUIA-DEPLOY.md).
