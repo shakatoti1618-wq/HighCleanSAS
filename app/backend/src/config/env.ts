@@ -5,6 +5,7 @@ const DEFAULT_SESSION_SECRET = 'highclean-dev-session-secret-change-me-123'
 const DEFAULT_ADMIN_PASSWORD = 'change-me-admin-password-2026'
 const DEFAULT_NOTIFY_EMAIL_CONTACT = 'notify-contact@highclean.local'
 const DEFAULT_NOTIFY_EMAIL_JOBS = 'notify-jobs@highclean.local'
+const DEFAULT_EMAIL_FROM = 'onboarding@resend.dev'
 
 export const envSchema = z
   .object({
@@ -22,6 +23,7 @@ export const envSchema = z
       .email()
       .default(DEFAULT_NOTIFY_EMAIL_CONTACT),
     NOTIFY_EMAIL_JOBS: z.string().email().default(DEFAULT_NOTIFY_EMAIL_JOBS),
+    EMAIL_FROM: z.string().email().default(DEFAULT_EMAIL_FROM),
     DATABASE_URL: z
       .string()
       .min(1, 'DATABASE_URL es obligatorio (ver .env / .env.example)'),
@@ -81,6 +83,14 @@ export const envSchema = z
         message:
           'NOTIFY_EMAIL_JOBS no puede usar el valor de desarrollo en producción',
         path: ['NOTIFY_EMAIL_JOBS'],
+      })
+    }
+    if (values.EMAIL_FROM === DEFAULT_EMAIL_FROM) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          'EMAIL_FROM no puede usar el remitente de resend.dev en producción',
+        path: ['EMAIL_FROM'],
       })
     }
   })
