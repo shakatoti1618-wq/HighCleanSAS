@@ -10,6 +10,7 @@ const app = createApp()
 const TEST_USER_ID = 'd1b0c1b2-1234-4a1b-8f6f-0b0e0c0d0a01'
 const TEST_EMAIL = 'admin.test@highclean.local'
 const TEST_PASSWORD = 'test-admin-password-123'
+const NEW_PASSWORD = 'NuevaClave-2026-Reglas'
 const ROLE_NAME = 'admin'
 
 beforeEach(async () => {
@@ -39,6 +40,16 @@ afterEach(async () => {
 afterAll(async () => {
   await prisma.$disconnect()
 })
+
+async function authenticatedAgent() {
+  const agent = request.agent(app)
+
+  await agent
+    .post('/api/v1/auth/login')
+    .send({ email: TEST_EMAIL, password: TEST_PASSWORD })
+
+  return agent
+}
 
 describe('POST /api/v1/auth/login', () => {
   it('inicia sesión y devuelve el usuario autenticado', async () => {
@@ -110,11 +121,7 @@ describe('GET /api/v1/auth/me', () => {
 
 describe('POST /api/v1/auth/logout', () => {
   it('cierra la sesión y la cookie queda inválida', async () => {
-    const agent = request.agent(app)
-
-    await agent
-      .post('/api/v1/auth/login')
-      .send({ email: TEST_EMAIL, password: TEST_PASSWORD })
+    const agent = await authenticatedAgent()
 
     const logout = await agent.post('/api/v1/auth/logout')
 
@@ -123,5 +130,70 @@ describe('POST /api/v1/auth/logout', () => {
     const me = await agent.get('/api/v1/auth/me')
 
     expect(me.status).toBe(401)
+  })
+})
+
+describe('PATCH /api/v1/auth/password', () => {
+  it('exige una sesión activa (401)', async () => {
+    const response = await request(app)
+      .patch('/api/v1/auth/password')
+      .send({ currentPassword: TEST_PASSWORD, newPassword: NEW_PASSWORD })
+
+    expect(response.status).toBe(401)
+    expect(response.body.error).toMatchObject({ code: 'AuthenticationError' })
+  })
+
+  it('rechaza la contraseña actual incorrecta (401)', async () => {
+    const agent = await authenticatedAgent()
+
+    const response = await agent
+      .patch('/api/v1/auth/password')
+      .send({ currentPassword: 'clave-actual-equivocada', newPassword: NEW_PASSWORD })
+
+    expect(response.status).toBe(401)
+    expect(response.body.error).toMatchObject({
+      code: 'AuthenticationError',
+      message: 'La contraseña actual es incorrecta',
+    })
+  })
+
+  it('rechaza contraseñas que no cumplen la política (400)', async () => {
+    const agent = await authenticatedAgent()
+
+    for (const newPassword of ['', '1234', 'solounsletraro', '123456789012']) {
+      const response = await agent
+        .patch('/api/v1/auth/password')
+        .send({ currentPassword: TEST_PASSWORD, newPassword })
+
+      expect(response.status).toBe(400)
+      expect(response.body.error).toMatchObject({ code: 'ValidationError' })
+    }
+  })
+
+  it('cambia la contraseña, cierra la sesión actual y exige el nuevo dato', async () => {
+    const agent = await authenticatedAgent()
+
+    const response = await agent
+      .patch('/api/v1/auth/password')
+      .send({ currentPassword: TEST_PASSWORD, newPassword: NEW_PASSWORD })
+
+    expect(response.status).toBe(200)
+    expect(response.body.message).toContain('Contraseña actualizada')
+
+    const me = await agent.get('/api/v1/auth/me')
+
+    expect(me.status).toBe(401)
+
+    const withNew = await agent
+      .post('/api/v1/auth/login')
+      .send({ email: TEST_EMAIL, password: NEW_PASSWORD })
+
+    expect(withNew.status).toBe(200)
+
+    const withOld = await agent
+      .post('/api/v1/auth/login')
+      .send({ email: TEST_EMAIL, password: TEST_PASSWORD })
+
+    expect(withOld.status).toBe(401)
   })
 })

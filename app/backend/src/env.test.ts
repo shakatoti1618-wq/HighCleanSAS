@@ -124,3 +124,30 @@ describe('envSchema en desarrollo', () => {
     expect(result.success).toBe(true)
   })
 })
+
+describe('envSchema: política de contraseña del administrador', () => {
+  it('rechaza una ADMIN_PASSWORD corta o sin letra o sin número', () => {
+    for (const adminPassword of ['corta123', 'soloLetrasSinNumeros', '123456789012']) {
+      const result = envSchema.safeParse({
+        ...productionBase,
+        ADMIN_PASSWORD: adminPassword,
+      })
+
+      expect(result.success).toBe(false)
+      if (!result.success) {
+        expect(
+          result.error.issues.map((issue) => issue.path.join('.')),
+        ).toContain('ADMIN_PASSWORD')
+      }
+    }
+  })
+
+  it('acepta una ADMIN_PASSWORD que cumple la política', () => {
+    const result = envSchema.safeParse({
+      ...productionBase,
+      ADMIN_PASSWORD: 'Clave-Fuerte-2026-Modulo',
+    })
+
+    expect(result.success).toBe(true)
+  })
+})
