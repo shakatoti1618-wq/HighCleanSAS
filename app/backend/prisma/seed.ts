@@ -54,7 +54,7 @@ Así mismo, nos enfocamos en la capacitación constante de nuestro personal, par
 
 const COMPANY_PHONE = '+573209498347'
 const COMPANY_NIT = '901330960-1'
-const COMPANY_EMAIL = 'highcleanclaient@gmail.com'
+const COMPANY_EMAIL = 'cotizaciones@highcleansas.com'
 const COMPANY_SERVICE_CITIES = [
   'Bogotá',
   'Villavicencio',
