@@ -28,7 +28,7 @@ Contacto   â†’ POST /api/v1/contact â†’ void notifyContactMessage()  (mismo patr
 ```
 
 - **EmailProvider** (interfaz espejo de `ChatProvider`): `send()` exige `subject` + `text`/`html`. ImplementaciÃ³n `ResendEmailProvider` con **no-op** si no hay `RESEND_API_KEY` (desarrollo/tests). Singleton por servicio.
-- **Resend**: sender `onboarding@resend.dev` hasta dominio propio (M17). âš ï¸ Con ese sender Resend **solo entrega al correo dueÃ±o de la key**, asÃ­ que en dev `NOTIFY_EMAIL` debe ser ese correo para probar.
+- **Resend**: sender configurable vÃ­a `EMAIL_FROM` (env). En dev el default es `onboarding@resend.dev`; âš ï¸ con ese sender Resend **solo entrega al correo dueÃ±o de la key**, asÃ­ que en dev el `NOTIFY_EMAIL_CONTACT`/`NOTIFY_EMAIL_JOBS` de prueba debe ser ese correo. Con dominio verificado en Resend, `EMAIL_FROM=notificaciones@highcleansas.com` (M17) entrega a cualquier destinatario.
 - **NotificaciÃ³n**: fire-and-forget (`void notify(...)` con try/catch interno). Un fallo del correo **nunca** pierde el registro ni bloquea la respuesta; sin datos sensibles en logs.
 - **Descarga del CV**: `GET /api/v1/admin/jobs/:id/file` con `Content-Type`, `Content-Disposition: inline`, `Cache-Control: no-store`; el `fileData` nunca se expone en listados.
 
@@ -118,22 +118,24 @@ Todos los `/admin/*` exigen sesiÃ³n (`requireAuth`) y rol `admin` (`requireAdmin
 - **QuÃ© cambiÃ³**: antes `NOTIFY_EMAIL` (Ãºnica) avisaba tanto cotizaciones como postulaciones al mismo correo. Ahora hay dos variables: `NOTIFY_EMAIL_CONTACT` (solo `ContactMessage` â†’ cotizaciones/contacto) y `NOTIFY_EMAIL_JOBS` (solo `JobApplication` â†’ hojas de vida), porque cada caso va a un correo distinto.
 - **DÃ³nde se decide el destinatario**: `src/services/notification.service.ts` (`sendNotification` recibe el `to` por evento). El registro del mensaje/postulaciÃ³n se guarda SIEMPRE en la BD; el correo es una notificaciÃ³n adicional que nunca bloquea la respuesta (try/catch + `console.warn`).
 - **Env**: `src/config/env.ts` declara ambas con default de desarrollo (`notify-contact@highclean.local`, `notify-jobs@highclean.local`) y el guard de producciÃ³n exige que **ninguna** use el valor de dev (el backend no arranca). `.env.example` las documenta; `NOTIFY_EMAIL` quedÃ³ **en desuso** (una clave vieja en `.env` es ignorada por Zod, no rompe el arranque, pero deja de usarse).
-- **Estado real de High Clean SAS**: `NOTIFY_EMAIL_CONTACT` â†’ `highcleanclaient@gmail.com`. `NOTIFY_EMAIL_JOBS` â†’ **PENDIENTE** (correo nuevo por crear solo para hojas de vida); en producciÃ³n serÃ¡ obligatorio definirla.
+- **Estado real de High Clean SAS**: `NOTIFY_EMAIL_CONTACT` â†’ `highcleanclaient@gmail.com`. `NOTIFY_EMAIL_JOBS` â†’ `talentohighcleansas@gmail.com` (inbox de hojas de vida, reenvÃ­a desde `trabajos@highcleansas.com` vÃ­a Cloudflare Email Routing). En producciÃ³n ambas son obligatorias.
+- **Remitente (M17 prep.)**: el backend envÃ­a las notificaciones desde `EMAIL_FROM` (configurable, `src/config/env.ts` con default de desarrollo `onboarding@resend.dev` y guard de producciÃ³n que impide usar ese remitente). Para High Clean: `EMAIL_FROM=notificaciones@highcleansas.com` (dominio verificado en Resend).
+- **Correo pÃºblico de contacto**: el campo `Company.email` mostrado en `/contacto`, chatbot, polÃ­tica de datos y JSON-LD es `cotizaciones@highcleansas.com` (reenvÃ­a a la casilla real vÃ­a Cloudflare Email Routing). El remitente (`EMAIL_FROM`) y los destinatarios internos (`NOTIFY_EMAIL_*`) son cosas distintas del dato pÃºblico.
 - **WhatsApp**: el seed (`prisma/seed.ts`) carga `whatsappNumber: '+573209498347'`; con ese dato el botÃ³n flotante del frontend aparece (condiciÃ³n en `WhatsAppButton.tsx`).
 ---
 
-## Actualización — Identificación legal (razón social y NIT)
+## Actualizaciï¿½n ï¿½ Identificaciï¿½n legal (razï¿½n social y NIT)
 
-Se completó la identificación legal de la empresa y se reemplazaron los TODOs de la página de política de datos que este módulo dejó "verbatim":
+Se completï¿½ la identificaciï¿½n legal de la empresa y se reemplazaron los TODOs de la pï¿½gina de polï¿½tica de datos que este mï¿½dulo dejï¿½ "verbatim":
 
 - **Modelo Company**: campo nuevo 
-it String? (+ migración `20260918020517_add_company_nit`). **No** se agregó legalName: la razón social ya es 
-ame ("High Clean SAS"); un campo espejo podría desincronizarse.
+it String? (+ migraciï¿½n `20260918020517_add_company_nit`). **No** se agregï¿½ legalName: la razï¿½n social ya es 
+ame ("High Clean SAS"); un campo espejo podrï¿½a desincronizarse.
 - **Seed**: 
 it: '901330960-1'.
 - **Panel admin**: 
-it editable (misma sección "Datos de contacto") con validación Zod de formato NNNNNNNNN-D (`/^\d{6,15}-\d$/`).
-- **Footer**: la línea de copyright muestra razón social + NIT (© {año} High Clean SAS — NIT 901330960-1).
-- **PoliticaDeDatos.tsx**: ahora usa useCompany() (antes era 100% estática). La sección 1 (Responsable del tratamiento) muestra razón social + NIT y correo/teléfono reales de Company; la dirección sigue como TODO porque no hay sede física única. La sección 6 (derechos del titular) también usa el correo real de Company. Mientras cargan los datos o si faltan, cae al TODO_TEXT.
+it editable (misma secciï¿½n "Datos de contacto") con validaciï¿½n Zod de formato NNNNNNNNN-D (`/^\d{6,15}-\d$/`).
+- **Footer**: la lï¿½nea de copyright muestra razï¿½n social + NIT (ï¿½ {aï¿½o} High Clean SAS ï¿½ NIT 901330960-1).
+- **PoliticaDeDatos.tsx**: ahora usa useCompany() (antes era 100% estï¿½tica). La secciï¿½n 1 (Responsable del tratamiento) muestra razï¿½n social + NIT y correo/telï¿½fono reales de Company; la direcciï¿½n sigue como TODO porque no hay sede fï¿½sica ï¿½nica. La secciï¿½n 6 (derechos del titular) tambiï¿½n usa el correo real de Company. Mientras cargan los datos o si faltan, cae al TODO_TEXT.
 - Tests: backend company.test.ts (expone 
-it) y dmin.test.ts (PATCH de NIT válido + rechazo de NIT sin guion).
+it) y dmin.test.ts (PATCH de NIT vï¿½lido + rechazo de NIT sin guion).
