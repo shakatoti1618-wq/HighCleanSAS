@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: highclean-api
+    runtime: docker
+    plan: free
+    dockerfilePath: deploy/backend/Dockerfile
+    healthCheckPath: /api/v1/health
+    preDeployCommand: npm run db:deploy
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CORS_ORIGIN
+        value: https://highcleansas.com
+      - key: EMAIL_FROM
+        value: notificaciones@highcleansas.com
+      - key: NOTIFY_EMAIL_CONTACT
+        sync: false
+      - key: NOTIFY_EMAIL_JOBS
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: SESSION_SECRET
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
