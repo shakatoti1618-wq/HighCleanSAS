@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import {
+  changePasswordHandler,
   loginHandler,
   logoutHandler,
   meHandler,
@@ -24,5 +25,6 @@ authRouter.post(
 authRouter.use(noStoreHeaders, requireAuth)
 authRouter.get('/me', meHandler)
 authRouter.post('/logout', logoutHandler)
+authRouter.patch('/password', changePasswordHandler)
 
 export default authRouter
