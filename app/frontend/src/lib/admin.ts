@@ -90,6 +90,20 @@ async function request<T>(
   return (await response.json()) as T
 }
 
+export interface ChangePasswordInput {
+  currentPassword: string
+  newPassword: string
+}
+
+export async function changePassword(
+  input: ChangePasswordInput,
+): Promise<{ message: string }> {
+  return request<{ message: string }>('/api/v1/auth/password', {
+    method: 'PATCH',
+    body: JSON.stringify(input),
+  })
+}
+
 export function fetchAdminDashboard(): Promise<AdminDashboard> {
   return request<AdminDashboard>('/api/v1/admin/dashboard')
 }

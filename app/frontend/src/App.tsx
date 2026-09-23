@@ -18,6 +18,7 @@ import Postulaciones from './pages/admin/Postulaciones.tsx'
 import Resenas from './pages/admin/Resenas.tsx'
 import Resumen from './pages/admin/Resumen.tsx'
 import ServiciosAdmin from './pages/admin/Servicios.tsx'
+import Cuenta from './pages/admin/Cuenta.tsx'
 
 const ResenasPublic = lazy(() => import('./pages/Resenas.tsx'))
 
@@ -56,6 +57,7 @@ function App() {
         <Route path="mensajes" element={<Mensajes />} />
         <Route path="galeria" element={<GaleriaAdmin />} />
         <Route path="postulaciones" element={<Postulaciones />} />
+        <Route path="cuenta" element={<Cuenta />} />
       </Route>
     </Routes>
   )

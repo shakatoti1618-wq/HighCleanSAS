@@ -9,6 +9,7 @@ import {
   LogOut,
   MessageSquareText,
   Star,
+  UserRound,
 } from 'lucide-react'
 import type { AuthUser } from '../lib/auth.ts'
 import { logout } from '../lib/auth.ts'
@@ -21,6 +22,7 @@ const navItems = [
   { to: '/admin/mensajes', label: 'Mensajes', icon: Inbox },
   { to: '/admin/galeria', label: 'Galería', icon: Images },
   { to: '/admin/postulaciones', label: 'Postulaciones', icon: FileText },
+  { to: '/admin/cuenta', label: 'Cuenta', icon: UserRound },
 ] as const
 
 function navLinkClass(isActive: boolean) {
