@@ -1,5 +1,6 @@
 import 'dotenv/config'
 import { z } from 'zod'
+import { PASSWORD_POLICY_MESSAGE } from '../schemas/auth.schema.js'
 
 const DEFAULT_SESSION_SECRET = 'highclean-dev-session-secret-change-me-123'
 const DEFAULT_ADMIN_PASSWORD = 'change-me-admin-password-2026'
@@ -16,7 +17,17 @@ export const envSchema = z
     CORS_ORIGIN: z.string().default('*'),
     SESSION_SECRET: z.string().min(32).default(DEFAULT_SESSION_SECRET),
     ADMIN_EMAIL: z.string().email().default('admin@highclean.local'),
-    ADMIN_PASSWORD: z.string().min(12).default(DEFAULT_ADMIN_PASSWORD),
+    ADMIN_PASSWORD: z
+      .string()
+      .default(DEFAULT_ADMIN_PASSWORD)
+      .superRefine((value, ctx) => {
+        if (value.length < 12 || !/[A-Za-z]/.test(value) || !/[0-9]/.test(value)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `ADMIN_PASSWORD: ${PASSWORD_POLICY_MESSAGE}`,
+          })
+        }
+      }),
     RESEND_API_KEY: z.string().optional(),
     NOTIFY_EMAIL_CONTACT: z
       .string()
