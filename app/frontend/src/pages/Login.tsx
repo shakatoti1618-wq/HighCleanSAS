@@ -1,17 +1,22 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { Loader2 } from 'lucide-react'
 import { getCurrentUser, login } from '../lib/auth.ts'
 import { EASE } from '../lib/motion.ts'
+import { PasswordField } from '../components/fields/PasswordField.tsx'
 
 function Login() {
   const navigate = useNavigate()
+  const location = useLocation()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const notice =
+    (location.state as { notice?: string } | null)?.notice ?? null
 
   useEffect(() => {
     let active = true
@@ -72,6 +77,15 @@ function Login() {
           Inicia sesión para gestionar el panel administrativo.
         </p>
 
+        {notice && (
+          <p
+            role="status"
+            className="mt-4 rounded-2xl border border-brand-leaf/40 bg-brand-leaf/10 px-4 py-2.5 text-sm font-medium text-brand-leafDeep"
+          >
+            {notice}
+          </p>
+        )}
+
         <form
           onSubmit={handleSubmit}
           className="mt-6 space-y-4"
@@ -103,14 +117,11 @@ function Login() {
             >
               Contraseña
             </label>
-            <input
+            <PasswordField
               id="login-password"
-              type="password"
-              autoComplete="current-password"
               value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              required
-              className="w-full rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-brand-turq"
+              onChange={setPassword}
+              autoComplete="current-password"
               placeholder="••••••••"
             />
           </div>
