@@ -22,7 +22,7 @@ beforeEach(async () => {
       name: 'High Clean SAS',
       phone: '+573209498347',
       whatsappNumber: '+573209498347',
-      email: 'highcleanclaient@gmail.com',
+      email: 'cotizaciones@highcleansas.com',
       schedules: REAL_SCHEDULES,
     },
   })
@@ -70,7 +70,7 @@ describe('POST /api/v1/chat', () => {
 
     expect(response.status).toBe(200)
     expect(response.body.response).toContain('+573209498347')
-    expect(response.body.response).toContain('highcleanclaient@gmail.com')
+    expect(response.body.response).toContain('cotizaciones@highcleansas.com')
     expect(response.body.response).not.toContain('no tengo los datos de contacto')
   })
 

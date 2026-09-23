@@ -41,7 +41,7 @@ const baseCompany: Company = {
   values: null,
   phone: '+573209498347',
   whatsappNumber: null,
-  email: 'highcleanclaient@gmail.com',
+  email: 'cotizaciones@highcleansas.com',
   address: null,
   schedules:
     'Lunes a viernes: 8:00 am a 5:00 pm\nSábado y domingo: 8:00 am a 12:00 pm',
@@ -95,7 +95,7 @@ describe('seo', () => {
       const block = localBusinessJson(baseCompany)
 
       expect(block?.telephone).toBe('+573209498347')
-      expect(block?.email).toBe('highcleanclaient@gmail.com')
+      expect(block?.email).toBe('cotizaciones@highcleansas.com')
       expect(block?.areaServed).toEqual([
         { '@type': 'City', name: 'Bogotá' },
         { '@type': 'City', name: 'Villavicencio' },
@@ -133,7 +133,7 @@ describe('seo', () => {
       expect(block?.openingHoursSpecification).toBeUndefined()
       expect(block?.name).toBe('High Clean SAS')
       expect(block?.telephone).toBe('+573209498347')
-      expect(block?.email).toBe('highcleanclaient@gmail.com')
+      expect(block?.email).toBe('cotizaciones@highcleansas.com')
       expect(block?.areaServed).toHaveLength(3)
     })
 
