@@ -138,8 +138,7 @@ function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: EASE, delay: 0.54 }}
             >
-              Empresa de aseo y limpieza. Slogan y descripción: TODO:
-              información pendiente de confirmar con High Clean SAS.
+              {company?.slogan ?? 'Empresa de aseo y limpieza profesional.'}
             </motion.p>
 
             <motion.div

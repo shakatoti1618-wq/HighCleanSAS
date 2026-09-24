@@ -5,7 +5,7 @@ import { container, itemCard } from '../lib/motion.ts'
 import ReviewCard from './ReviewCard.tsx'
 import SectionHeader from './SectionHeader.tsx'
 
-const TODO_TEXT = 'TODO: información pendiente de confirmar con High Clean SAS'
+const EMPTY_REVIEWS_MESSAGE = 'Próximamente nuestros primeros testimonios'
 
 function Reviews() {
   const { reviews, error } = useApprovedReviews()
@@ -49,7 +49,7 @@ function Reviews() {
                 className="h-10 w-10 text-brand-turq/50"
                 aria-hidden="true"
               />
-              <p className="mt-4 text-slate-600">{TODO_TEXT}</p>
+              <p className="mt-4 text-slate-600">{EMPTY_REVIEWS_MESSAGE}</p>
             </motion.div>
           )}
         </motion.div>
