@@ -63,8 +63,7 @@ function Galeria() {
           className="grid gap-6 md:grid-cols-3"
           variants={container}
           initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.1 }}
+          animate="show"
         >
           {images?.map((image) => (
             <motion.figure
@@ -78,14 +77,14 @@ function Galeria() {
                   controls
                   playsInline
                   preload="metadata"
-                  className="h-72 w-full bg-slate-900 object-cover"
+                  className="aspect-[3/4] w-full bg-slate-900 object-cover"
                 />
               ) : (
                 <img
                   src={image.url}
                   alt={image.alt ?? 'Fotografía del trabajo de High Clean SAS'}
                   loading="lazy"
-                  className="h-72 w-full object-cover transition duration-500 ease-out group-hover:scale-105"
+                  className="aspect-[3/4] w-full object-cover transition duration-500 ease-out group-hover:scale-105"
                 />
               )}
               <figcaption className="pointer-events-none absolute inset-0 flex items-end bg-linear-to-t from-brand-ink/90 via-brand-ink/25 to-transparent p-6">

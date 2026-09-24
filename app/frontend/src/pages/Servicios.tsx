@@ -155,8 +155,7 @@ function Servicios() {
           className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
           variants={container}
           initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.1 }}
+          animate="show"
         >
           {services?.map((service) => (
             <motion.article
@@ -165,7 +164,7 @@ function Servicios() {
               className="group flex flex-col overflow-hidden rounded-sm border border-brand-turqSoft bg-white shadow-md transition-all duration-500 hover:-translate-y-6 hover:shadow-2xl"
             >
               {service.imageUrl ? (
-                <div className="relative h-44 overflow-hidden bg-brand-turq/10">
+                <div className="relative aspect-[3/4] overflow-hidden bg-brand-turq/10">
                   <img
                     src={service.imageUrl}
                     alt={`Servicio de ${service.name.toLowerCase()} de High Clean SAS`}
@@ -174,7 +173,7 @@ function Servicios() {
                   />
                 </div>
               ) : (
-                <div className="flex h-44 items-center justify-center bg-brand-turq/10">
+                <div className="flex aspect-[3/4] items-center justify-center bg-brand-turq/10">
                   <Images className="h-10 w-10 text-brand-turq/50" aria-hidden="true" />
                 </div>
               )}
