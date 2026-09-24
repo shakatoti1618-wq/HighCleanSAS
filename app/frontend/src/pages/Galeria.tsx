@@ -5,6 +5,39 @@ import Seo from '../components/Seo.tsx'
 import { container, item } from '../lib/motion.ts'
 import { fetchGalleryImages, type GalleryImage } from '../lib/api.ts'
 
+function VideoItem({ url }: { url: string }) {
+  const [failed, setFailed] = useState(false)
+
+  if (failed) {
+    return (
+      <div className="flex aspect-[3/4] flex-col items-center justify-center gap-4 bg-slate-900 p-6 text-center">
+        <p className="text-sm leading-relaxed text-white">
+          No se pudo reproducir el video dentro de la página.
+        </p>
+        <a
+          href={url}
+          target="_blank"
+          rel="noreferrer"
+          className="rounded-sm bg-brand-turq px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-turqDeep"
+        >
+          Ver video
+        </a>
+      </div>
+    )
+  }
+
+  return (
+    <video
+      src={url}
+      controls
+      playsInline
+      preload="metadata"
+      className="aspect-[3/4] w-full bg-slate-900 object-cover"
+      onError={() => setFailed(true)}
+    />
+  )
+}
+
 function Galeria() {
   const [images, setImages] = useState<GalleryImage[] | null>(null)
   const [error, setError] = useState(false)
@@ -72,26 +105,29 @@ function Galeria() {
               className="group relative overflow-hidden rounded-sm bg-white shadow-md"
             >
               {image.type === 'VIDEO' ? (
-                <video
-                  src={image.url}
-                  controls
-                  playsInline
-                  preload="metadata"
-                  className="aspect-[3/4] w-full bg-slate-900 object-cover"
-                />
+                <>
+                  <VideoItem url={image.url} />
+                  <figcaption className="bg-brand-ink/90 p-3 text-center">
+                    <p className="text-sm font-semibold text-white">
+                      Video de High Clean SAS
+                    </p>
+                  </figcaption>
+                </>
               ) : (
-                <img
-                  src={image.url}
-                  alt={image.alt ?? 'Fotografía del trabajo de High Clean SAS'}
-                  loading="lazy"
-                  className="aspect-[3/4] w-full object-cover transition duration-500 ease-out group-hover:scale-105"
-                />
+                <>
+                  <img
+                    src={image.url}
+                    alt={image.alt ?? 'Fotografía del trabajo de High Clean SAS'}
+                    loading="lazy"
+                    className="aspect-[3/4] w-full object-cover transition duration-500 ease-out group-hover:scale-105"
+                  />
+                  <figcaption className="pointer-events-none absolute inset-0 flex items-end bg-linear-to-t from-brand-ink/90 via-brand-ink/25 to-transparent p-6">
+                    <p className="font-display text-lg font-semibold leading-snug text-white">
+                      Trabajo de High Clean SAS
+                    </p>
+                  </figcaption>
+                </>
               )}
-              <figcaption className="pointer-events-none absolute inset-0 flex items-end bg-linear-to-t from-brand-ink/90 via-brand-ink/25 to-transparent p-6">
-                <p className="font-display text-lg font-semibold leading-snug text-white">
-                  Trabajo de High Clean SAS
-                </p>
-              </figcaption>
             </motion.figure>
           ))}
 
