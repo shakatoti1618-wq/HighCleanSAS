@@ -66,6 +66,18 @@ function Empresa() {
     setSaved(false)
   }
 
+  const handleStat = (
+    key: 'activeClients' | 'yearsOperating' | 'monthlyServices',
+    value: string,
+  ) => {
+    setForm((previous) =>
+      previous
+        ? { ...previous, [key]: value === '' ? null : Number(value) }
+        : previous,
+    )
+    setSaved(false)
+  }
+
   const handleValue = (
     index: number,
     key: keyof CompanyValue,
@@ -116,6 +128,9 @@ function Empresa() {
           form.serviceCities && form.serviceCities.length > 0
             ? form.serviceCities
             : undefined,
+        activeClients: form.activeClients ?? undefined,
+        yearsOperating: form.yearsOperating ?? undefined,
+        monthlyServices: form.monthlyServices ?? undefined,
       })
       resetCompanyCache()
       setSaved(true)
@@ -286,6 +301,69 @@ function Empresa() {
                 </button>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="rounded-sm border border-brand-turqSoft bg-white p-6 shadow-md">
+          <h2 className="font-display text-lg font-semibold text-brand-ink">
+            Estadísticas
+          </h2>
+          <p className="mt-1 text-sm text-slate-600">
+            Se muestran como cifras destacadas en la página de inicio.
+          </p>
+
+          <div className="mt-4 grid gap-5 sm:grid-cols-3">
+            <label className="block">
+              <span className="mb-1.5 block text-sm font-medium text-brand-ink">
+                Clientes activos
+              </span>
+              <input
+                type="number"
+                name="activeClients"
+                value={form?.activeClients ?? ''}
+                onChange={(event) =>
+                  handleStat('activeClients', event.target.value)
+                }
+                min={0}
+                step={1}
+                placeholder="500"
+                className={inputClass}
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1.5 block text-sm font-medium text-brand-ink">
+                Años de experiencia
+              </span>
+              <input
+                type="number"
+                name="yearsOperating"
+                value={form?.yearsOperating ?? ''}
+                onChange={(event) =>
+                  handleStat('yearsOperating', event.target.value)
+                }
+                min={0}
+                step={1}
+                placeholder="8"
+                className={inputClass}
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1.5 block text-sm font-medium text-brand-ink">
+                Servicios al mes
+              </span>
+              <input
+                type="number"
+                name="monthlyServices"
+                value={form?.monthlyServices ?? ''}
+                onChange={(event) =>
+                  handleStat('monthlyServices', event.target.value)
+                }
+                min={0}
+                step={1}
+                placeholder="700"
+                className={inputClass}
+              />
+            </label>
           </div>
         </div>
 
