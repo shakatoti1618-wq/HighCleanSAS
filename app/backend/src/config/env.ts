@@ -35,6 +35,12 @@ export const envSchema = z
       .default(DEFAULT_NOTIFY_EMAIL_CONTACT),
     NOTIFY_EMAIL_JOBS: z.string().email().default(DEFAULT_NOTIFY_EMAIL_JOBS),
     EMAIL_FROM: z.string().email().default(DEFAULT_EMAIL_FROM),
+    R2_ACCOUNT_ID: z.string().trim().min(1).optional(),
+    R2_ACCESS_KEY_ID: z.string().trim().min(1).optional(),
+    R2_SECRET_ACCESS_KEY: z.string().trim().min(1).optional(),
+    R2_ENDPOINT: z.string().url().optional(),
+    R2_BUCKET_NAME: z.string().trim().min(1).optional(),
+    R2_PUBLIC_BASE_URL: z.string().url().optional(),
     DATABASE_URL: z
       .string()
       .min(1, 'DATABASE_URL es obligatorio (ver .env / .env.example)'),
@@ -103,6 +109,23 @@ export const envSchema = z
           'EMAIL_FROM no puede usar el remitente de resend.dev en producción',
         path: ['EMAIL_FROM'],
       })
+    }
+    const r2Keys = [
+      'R2_ACCOUNT_ID',
+      'R2_ACCESS_KEY_ID',
+      'R2_SECRET_ACCESS_KEY',
+      'R2_ENDPOINT',
+      'R2_BUCKET_NAME',
+      'R2_PUBLIC_BASE_URL',
+    ] as const
+    for (const key of r2Keys) {
+      if (!values[key]) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `${key} es obligatorio en producción (subida de medios a R2)`,
+          path: [key],
+        })
+      }
     }
   })
 

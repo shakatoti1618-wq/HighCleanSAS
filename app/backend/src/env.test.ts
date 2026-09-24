@@ -13,6 +13,12 @@ const productionBase = {
   NOTIFY_EMAIL_JOBS: 'hv@highclean.example',
   DATABASE_URL:
     'postgresql://usuario:clave@localhost:5432/highclean?schema=public',
+  R2_ACCOUNT_ID: 'cuenta123',
+  R2_ACCESS_KEY_ID: 'clave-acceso-123',
+  R2_SECRET_ACCESS_KEY: 'secreto-r2-123',
+  R2_ENDPOINT: 'https://abcdef1234567890abc.r2.cloudflarestorage.com',
+  R2_BUCKET_NAME: 'highclean-media',
+  R2_PUBLIC_BASE_URL: 'https://media.highclean.example',
 }
 
 describe('envSchema en producción', () => {
@@ -97,6 +103,35 @@ describe('envSchema en producción', () => {
       expect(result.error.issues.map((issue) => issue.path.join('.'))).toContain(
         'EMAIL_FROM',
       )
+    }
+  })
+
+  it('rechaza la ausencia de credenciales R2 en producción', () => {
+    const {
+      R2_ACCOUNT_ID: _cuenta,
+      R2_ACCESS_KEY_ID: _acceso,
+      R2_SECRET_ACCESS_KEY: _secreto,
+      R2_ENDPOINT: _endpoint,
+      R2_BUCKET_NAME: _bucket,
+      R2_PUBLIC_BASE_URL: _publica,
+      ...sinR2
+    } = productionBase
+    const result = envSchema.safeParse(sinR2)
+
+    expect(result.success).toBe(false)
+    if (!result.success) {
+      for (const clave of [
+        'R2_ACCOUNT_ID',
+        'R2_ACCESS_KEY_ID',
+        'R2_SECRET_ACCESS_KEY',
+        'R2_ENDPOINT',
+        'R2_BUCKET_NAME',
+        'R2_PUBLIC_BASE_URL',
+      ]) {
+        expect(
+          result.error.issues.map((issue) => issue.path.join('.')),
+        ).toContain(clave)
+      }
     }
   })
 
