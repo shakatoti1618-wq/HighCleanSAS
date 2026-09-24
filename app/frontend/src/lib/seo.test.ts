@@ -26,6 +26,7 @@ const company: Company = {
   whatsappNumber: null,
   email: 'contacto@highclean.co',
   address: 'Bogotá, Colombia',
+  slogan: null,
   schedules: null,
   serviceCities: null,
   activeClients: null,
@@ -46,6 +47,7 @@ const baseCompany: Company = {
   whatsappNumber: null,
   email: 'cotizaciones@highcleansas.com',
   address: null,
+  slogan: null,
   schedules:
     'Lunes a viernes: 8:00 am a 5:00 pm\nSábado y domingo: 8:00 am a 12:00 pm',
   serviceCities: ['Bogotá', 'Villavicencio', 'Bucaramanga'],

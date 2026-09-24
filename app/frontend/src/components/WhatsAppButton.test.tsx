@@ -17,6 +17,7 @@ const baseCompany: Company = {
   whatsappNumber: null,
   email: null,
   address: null,
+  slogan: null,
   schedules: null,
   serviceCities: null,
   activeClients: null,
