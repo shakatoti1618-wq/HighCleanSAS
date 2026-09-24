@@ -2,6 +2,7 @@ import type { Request, Response } from 'express'
 import {
   createGalleryImageSchema,
   createServiceSchema,
+  galleryUploadSchema,
   reviewStatusSchema,
   updateCompanySchema,
   updateServiceSchema,
@@ -26,6 +27,8 @@ import {
   setReviewStatusAdmin,
   updateCompanyData,
   updateServiceAdmin,
+  uploadGalleryMediaAdmin,
+  uploadServicePhotoAdmin,
 } from '../services/admin.service.js'
 import { ValidationError } from '../utils/httpError.js'
 
@@ -79,6 +82,45 @@ export async function updateServiceHandler(req: Request, res: Response) {
 export async function deleteServiceHandler(req: Request, res: Response) {
   await deleteServiceAdmin(parseId(req))
   res.status(204).end()
+}
+
+export async function uploadServicePhotoHandler(req: Request, res: Response) {
+  if (!req.file) {
+    throw new ValidationError('Se requiere un archivo en el campo "file"')
+  }
+
+  const file = {
+    originalName: req.file.originalname,
+    mimetype: req.file.mimetype,
+    size: req.file.size,
+    data: req.file.buffer,
+  }
+
+  res.json(await uploadServicePhotoAdmin(parseId(req), file))
+}
+
+export async function uploadGalleryMediaHandler(req: Request, res: Response) {
+  if (!req.file) {
+    throw new ValidationError('Se requiere un archivo en el campo "file"')
+  }
+
+  const result = galleryUploadSchema.safeParse(req.body ?? {})
+  if (!result.success) {
+    throw new ValidationError(
+      result.error.issues.map((issue) => issue.message).join(', '),
+    )
+  }
+
+  const file = {
+    originalName: req.file.originalname,
+    mimetype: req.file.mimetype,
+    size: req.file.size,
+    data: req.file.buffer,
+  }
+
+  res.status(201).json(
+    await uploadGalleryMediaAdmin(file, result.data.alt ?? null),
+  )
 }
 
 export async function listReviewsHandler(_req: Request, res: Response) {
