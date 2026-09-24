@@ -32,6 +32,7 @@ export const updateCompanySchema = z
       .trim()
       .max(5000, 'Máximo 5000 caracteres')
       .optional(),
+    slogan: z.string().trim().max(200, 'Máximo 200 caracteres').optional(),
     values: z
       .array(companyValueSchema)
       .min(1, 'Agrega al menos un valor')

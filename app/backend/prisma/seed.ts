@@ -66,6 +66,10 @@ const COMPANY_SERVICE_CITIES = [
 const COMPANY_SCHEDULES =
   'Lunes a viernes: 8:00 am a 5:00 pm\nSábado y domingo: 8:00 am a 12:00 pm'
 
+const COMPANY_SLOGAN = 'Limpieza que transforma, espacios que inspiran'
+
+const COMPANY_ADDRESS = 'Calle 16 # 8A-53, Edificio Opolo, Bogotá'
+
 const COMPANY_STATS = {
   activeClients: 500,
   yearsOperating: 8,
@@ -352,6 +356,8 @@ async function main() {
             email: COMPANY_EMAIL,
             serviceCities: COMPANY_SERVICE_CITIES,
             schedules: COMPANY_SCHEDULES,
+            address: COMPANY_ADDRESS,
+            slogan: COMPANY_SLOGAN,
             activeClients: COMPANY_STATS.activeClients,
             yearsOperating: COMPANY_STATS.yearsOperating,
             monthlyServices: COMPANY_STATS.monthlyServices,
@@ -373,6 +379,8 @@ async function main() {
             email: COMPANY_EMAIL,
             serviceCities: COMPANY_SERVICE_CITIES,
             schedules: COMPANY_SCHEDULES,
+            address: COMPANY_ADDRESS,
+            slogan: COMPANY_SLOGAN,
             activeClients: COMPANY_STATS.activeClients,
             yearsOperating: COMPANY_STATS.yearsOperating,
             monthlyServices: COMPANY_STATS.monthlyServices,
@@ -385,37 +393,8 @@ async function main() {
   })
 
   if (reviewCount === 0) {
-    const placeholder =
-      'TODO: información pendiente de confirmar con High Clean SAS'
-
-    await prisma.review.createMany({
-      data: [
-        {
-          author: placeholder,
-          content: placeholder,
-          rating: 5,
-          status: 'APPROVED',
-          companyId,
-        },
-        {
-          author: placeholder,
-          content: placeholder,
-          rating: 5,
-          status: 'APPROVED',
-          companyId,
-        },
-        {
-          author: placeholder,
-          content: placeholder,
-          rating: 5,
-          status: 'APPROVED',
-          companyId,
-        },
-      ],
-    })
-
     console.log(
-      'Seed completado: empresa High Clean SAS y reseñas de ejemplo verificadas.',
+      'Seed completado: empresa High Clean SAS verificada, sin reseñas de ejemplo (se esperan testimonios reales).',
     )
   } else {
     console.log(

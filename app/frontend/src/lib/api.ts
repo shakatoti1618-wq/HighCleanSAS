@@ -16,6 +16,7 @@ export interface Company {
   whatsappNumber: string | null
   email: string | null
   address: string | null
+  slogan: string | null
   schedules: string | null
   serviceCities: string[] | null
   activeClients: number | null
