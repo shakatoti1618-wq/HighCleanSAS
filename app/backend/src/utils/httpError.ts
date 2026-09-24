@@ -43,3 +43,9 @@ export class DatabaseError extends AppError {
     super(message, 500)
   }
 }
+
+export class StorageError extends AppError {
+  constructor(message = 'Error en el almacenamiento de archivos') {
+    super(message, 502)
+  }
+}
