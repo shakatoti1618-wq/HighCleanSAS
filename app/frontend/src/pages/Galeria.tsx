@@ -30,6 +30,9 @@ function VideoItem({ url }: { url: string }) {
     <video
       src={url}
       controls
+      autoPlay
+      muted
+      loop
       playsInline
       preload="metadata"
       className="aspect-[3/4] w-full bg-slate-900 object-cover"
@@ -107,10 +110,18 @@ function Galeria() {
               {image.type === 'VIDEO' ? (
                 <>
                   <VideoItem url={image.url} />
-                  <figcaption className="bg-brand-ink/90 p-3 text-center">
+                  <figcaption className="flex items-center justify-between gap-2 bg-brand-ink/90 p-3">
                     <p className="text-sm font-semibold text-white">
                       Video de High Clean SAS
                     </p>
+                    <a
+                      href={image.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="shrink-0 text-xs font-medium text-brand-turq hover:text-white"
+                    >
+                      Ver video
+                    </a>
                   </figcaption>
                 </>
               ) : (
