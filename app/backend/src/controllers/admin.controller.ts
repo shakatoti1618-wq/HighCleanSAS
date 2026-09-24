@@ -4,6 +4,7 @@ import {
   createServiceSchema,
   galleryUploadSchema,
   reviewStatusSchema,
+  serviceOptionsSchema,
   updateCompanySchema,
   updateServiceSchema,
 } from '../schemas/admin.schema.js'
@@ -24,6 +25,7 @@ import {
   listServicesAdmin,
   markJobReviewedAdmin,
   markMessageReadAdmin,
+  replaceServiceOptionsAdmin,
   setReviewStatusAdmin,
   updateCompanyData,
   updateServiceAdmin,
@@ -77,6 +79,16 @@ export async function updateServiceHandler(req: Request, res: Response) {
     )
   }
   res.json(await updateServiceAdmin(parseId(req), result.data))
+}
+
+export async function replaceServiceOptionsHandler(req: Request, res: Response) {
+  const result = serviceOptionsSchema.safeParse(req.body ?? {})
+  if (!result.success) {
+    throw new ValidationError(
+      result.error.issues.map((issue) => issue.message).join(', '),
+    )
+  }
+  res.json(await replaceServiceOptionsAdmin(parseId(req), result.data.options))
 }
 
 export async function deleteServiceHandler(req: Request, res: Response) {
