@@ -231,6 +231,20 @@ function Empresa() {
               className={`${inputClass} resize-none`}
             />
           </label>
+
+          <label className="block">
+            <span className="mb-1.5 block text-sm font-medium text-brand-ink">
+              Slogan
+            </span>
+            <input
+              name="slogan"
+              value={form?.slogan ?? ''}
+              onChange={(event) => handleField('slogan', event.target.value)}
+              maxLength={200}
+              placeholder="Limpieza que transforma, espacios que inspiran"
+              className={inputClass}
+            />
+          </label>
         </div>
 
         <div className="rounded-sm border border-brand-turqSoft bg-white p-6 shadow-md">
