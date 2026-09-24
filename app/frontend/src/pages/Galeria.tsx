@@ -5,8 +5,6 @@ import Seo from '../components/Seo.tsx'
 import { container, item } from '../lib/motion.ts'
 import { fetchGalleryImages, type GalleryImage } from '../lib/api.ts'
 
-const TODO_TEXT = 'TODO: información pendiente de confirmar con High Clean SAS'
-
 function Galeria() {
   const [images, setImages] = useState<GalleryImage[] | null>(null)
   const [error, setError] = useState(false)
@@ -50,8 +48,8 @@ function Galeria() {
             Galería
           </h1>
           <p className="mt-4 leading-relaxed text-slate-600">
-            Fotografías de nuestros trabajos. Las imágenes estarán disponibles
-            próximamente: {TODO_TEXT}
+            Fotografías de nuestros trabajos de limpieza profesional en hogares,
+            conjuntos, oficinas y más.
           </p>
         </div>
 
@@ -92,7 +90,7 @@ function Galeria() {
               )}
               <figcaption className="pointer-events-none absolute inset-0 flex items-end bg-linear-to-t from-brand-ink/90 via-brand-ink/25 to-transparent p-6">
                 <p className="font-display text-lg font-semibold leading-snug text-white">
-                  {image.alt ?? TODO_TEXT}
+                  Trabajo de High Clean SAS
                 </p>
               </figcaption>
             </motion.figure>
@@ -107,7 +105,9 @@ function Galeria() {
                 className="h-10 w-10 text-brand-turq/50"
                 aria-hidden="true"
               />
-              <p className="mt-4 text-slate-600">{TODO_TEXT}</p>
+              <p className="mt-4 text-slate-600">
+                Aún no hay imágenes publicadas.
+              </p>
             </motion.div>
           )}
         </motion.div>
