@@ -69,6 +69,24 @@ export const updateCompanySchema = z
     email: z.string().trim().email('Ingresa un correo válido').optional(),
     address: z.string().trim().max(300, 'Máximo 300 caracteres').optional(),
     schedules: z.string().trim().max(1000, 'Máximo 1000 caracteres').optional(),
+    activeClients: z
+      .number()
+      .int('Debe ser un número entero')
+      .min(0, 'No puede ser menor que 0')
+      .max(999999, 'Valor demasiado alto')
+      .optional(),
+    yearsOperating: z
+      .number()
+      .int('Debe ser un número entero')
+      .min(0, 'No puede ser menor que 0')
+      .max(120, 'Valor demasiado alto')
+      .optional(),
+    monthlyServices: z
+      .number()
+      .int('Debe ser un número entero')
+      .min(0, 'No puede ser menor que 0')
+      .max(999999, 'Valor demasiado alto')
+      .optional(),
   })
   .refine((data) => Object.keys(data).length > 0, {
     message: 'Enviar al menos un campo para actualizar',
@@ -130,4 +148,43 @@ export const galleryUploadSchema = z.object({
     .trim()
     .max(300, 'El texto alternativo no puede superar los 300 caracteres')
     .optional(),
+})
+
+const serviceOptionSchema = z.object({
+  label: z
+    .string()
+    .trim()
+    .min(1, 'El nombre de la modalidad es obligatorio')
+    .max(100, 'El nombre de la modalidad no puede superar los 100 caracteres'),
+  price: z
+    .number()
+    .int('El precio debe ser un número entero')
+    .min(0, 'El precio no puede ser negativo')
+    .max(100000000, 'El precio es demasiado alto'),
+  note: z
+    .string()
+    .trim()
+    .max(300, 'La nota no puede superar los 300 caracteres')
+    .optional()
+    .nullable()
+    .transform((value) => (value === '' ? null : value)),
+  group: z
+    .string()
+    .trim()
+    .max(80, 'El grupo no puede superar los 80 caracteres')
+    .optional()
+    .nullable()
+    .transform((value) => (value === '' ? null : value)),
+  sortOrder: z
+    .number()
+    .int('El orden debe ser un número entero')
+    .min(0, 'El orden no puede ser negativo')
+    .max(1000, 'El orden es demasiado alto'),
+})
+
+export const serviceOptionsSchema = z.object({
+  options: z
+    .array(serviceOptionSchema)
+    .min(1, 'Agrega al menos una modalidad')
+    .max(50, 'Máximo 50 modalidades por servicio'),
 })
