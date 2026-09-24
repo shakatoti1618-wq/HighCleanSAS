@@ -46,6 +46,7 @@ model Company {
   serviceCities  String[]
   email          String?
   address        String?
+  slogan         String?
   schedules      String?
   activeClients  Int?
   yearsOperating Int?
