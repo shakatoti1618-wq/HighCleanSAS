@@ -28,6 +28,9 @@ const company: Company = {
   address: 'Bogotá, Colombia',
   schedules: null,
   serviceCities: null,
+  activeClients: null,
+  yearsOperating: null,
+  monthlyServices: null,
 }
 
 const baseCompany: Company = {
@@ -46,6 +49,9 @@ const baseCompany: Company = {
   schedules:
     'Lunes a viernes: 8:00 am a 5:00 pm\nSábado y domingo: 8:00 am a 12:00 pm',
   serviceCities: ['Bogotá', 'Villavicencio', 'Bucaramanga'],
+  activeClients: null,
+  yearsOperating: null,
+  monthlyServices: null,
 }
 
 describe('seo', () => {
@@ -240,7 +246,14 @@ describe('seo', () => {
 
   describe('servicesJson', () => {
     const services: Service[] = [
-      { id: 's1', name: 'Aseo general', description: 'Limpieza integral.', imageUrl: null, companyId: 'id' },
+      {
+        id: 's1',
+        name: 'Aseo general',
+        description: 'Limpieza integral.',
+        imageUrl: null,
+        companyId: 'id',
+        options: [],
+      },
     ]
 
     it('arma un ItemList con los servicios reales', () => {

@@ -18,6 +18,18 @@ export interface Company {
   address: string | null
   schedules: string | null
   serviceCities: string[] | null
+  activeClients: number | null
+  yearsOperating: number | null
+  monthlyServices: number | null
+}
+
+export interface ServiceOption {
+  id: string
+  label: string
+  price: number
+  note: string | null
+  group: string | null
+  sortOrder: number
 }
 
 export interface Service {
@@ -26,6 +38,7 @@ export interface Service {
   description: string | null
   imageUrl: string | null
   companyId: string
+  options: ServiceOption[]
 }
 
 export interface GalleryImage {

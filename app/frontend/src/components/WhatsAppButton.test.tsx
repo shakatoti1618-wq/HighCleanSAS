@@ -19,6 +19,9 @@ const baseCompany: Company = {
   address: null,
   schedules: null,
   serviceCities: null,
+  activeClients: null,
+  yearsOperating: null,
+  monthlyServices: null,
 }
 
 function stubCompany(whatsappNumber: string | null) {
