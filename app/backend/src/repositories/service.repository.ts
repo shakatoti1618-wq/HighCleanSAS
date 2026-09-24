@@ -20,7 +20,7 @@ export async function createService(
 
 export async function updateService(
   id: string,
-  data: { name?: string; description?: string | null },
+  data: { name?: string; description?: string | null; imageUrl?: string | null },
 ) {
   return prisma.service.update({ where: { id }, data })
 }

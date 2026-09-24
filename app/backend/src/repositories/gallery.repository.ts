@@ -10,8 +10,13 @@ export async function findGalleryImageById(id: string) {
   return prisma.galleryImage.findUnique({ where: { id } })
 }
 
-export async function createGalleryImage(url: string, alt: string | null, companyId: string) {
-  return prisma.galleryImage.create({ data: { url, alt, companyId } })
+export async function createGalleryImage(
+  url: string,
+  alt: string | null,
+  companyId: string,
+  type: 'IMAGE' | 'VIDEO' = 'IMAGE',
+) {
+  return prisma.galleryImage.create({ data: { url, alt, companyId, type } })
 }
 
 export async function deleteGalleryImage(id: string) {
