@@ -3,6 +3,45 @@ import type { ChatContext, ChatProvider } from './chat.provider.js'
 const TO_CONTACT_HINT =
   'Puedes escribirnos desde la página de contacto o por WhatsApp para resolverlo.'
 
+const CONTACT_KEYWORDS = [
+  'contacto',
+  'contactar',
+  'telefono',
+  'numero',
+  'correo',
+  'email',
+  'direccion',
+  'whatsapp',
+  'ubicacion',
+  'ubicados',
+  'ubicarse',
+  'ubicar',
+  'ubicada',
+  'ubicadas',
+  'encontrar',
+  'quedan',
+  'donde estan',
+  'donde queda',
+  'contactarlos',
+  'cotizacion',
+  'cotizar',
+]
+
+const PRICING_KEYWORDS = [
+  'precio',
+  'precios',
+  'costo',
+  'costos',
+  'tarifa',
+  'cuanto cuesta',
+  'cuanto vale',
+  'valor',
+  'cobran',
+  'cobrar',
+  'pago',
+  'pagos',
+]
+
 function normalize(text: string): string {
   return text
     .toLowerCase()
@@ -47,6 +86,9 @@ function contactInfo(context: ChatContext): string {
     channels.push(`WhatsApp al ${company.whatsappNumber}`)
   if (company?.email) channels.push(`correo ${company.email}`)
   if (company?.address) channels.push(`dirección: ${company.address}`)
+  if (company?.serviceCities && company.serviceCities.length > 0) {
+    channels.push(`Prestamos servicio en: ${company.serviceCities.join(', ')}`)
+  }
 
   if (channels.length === 0) {
     return `Aún no tengo los datos de contacto confirmados. ${TO_CONTACT_HINT}`
@@ -66,8 +108,13 @@ export class KnowledgeChatProvider implements ChatProvider {
       return `¡Hola! Soy el asistente informativo de ${companyName}. Pregúntame por sus servicios, la empresa, horarios o cómo contactarlos.`
     }
 
-    if (hasAny(text, ['precio', 'precios', 'costo', 'costos', 'cotizacion', 'cotizar', 'tarifa', 'cuanto cuesta', 'cuanto vale', 'valor', 'cobran', 'cobrar', 'pago', 'pagos'])) {
-      return `Los precios de ${companyName} aún no están publicados. Te recomiendo solicitar una cotización directa. ${TO_CONTACT_HINT}`
+    // Contacto ANTES que precios: si el mensaje menciona contacto/cotización + palabras de contacto, prioriza contacto
+    if (hasAny(text, CONTACT_KEYWORDS)) {
+      return contactInfo(context)
+    }
+
+    if (hasAny(text, PRICING_KEYWORDS)) {
+      return `Puedes ver los precios de nuestros servicios en la página de Servicios. Para una cotización personalizada, contáctanos por WhatsApp o el formulario de contacto.`
     }
 
     if (hasAny(text, ['servicio', 'servicios', 'que hacen', 'que ofrecen', 'limpieza', 'aseo', 'trabajos', 'portfolio', 'portafolio'])) {
@@ -79,10 +126,6 @@ export class KnowledgeChatProvider implements ChatProvider {
         return `El horario de atención de ${companyName} es: ${context.company.schedules}.`
       }
       return `Todavía no tengo el horario de atención confirmado. ${TO_CONTACT_HINT}`
-    }
-
-    if (hasAny(text, ['contacto', 'contactar', 'telefono', 'numero', 'correo', 'email', 'direccion', 'whatsapp', 'ubicacion', 'ubicados', 'contactarlos'])) {
-      return contactInfo(context)
     }
 
     if (
