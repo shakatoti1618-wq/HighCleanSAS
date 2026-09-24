@@ -14,6 +14,7 @@ export interface ChatCompanyContext {
   email: string | null
   address: string | null
   whatsappNumber: string | null
+  serviceCities: string[] | null
 }
 
 export interface ChatServiceContext {

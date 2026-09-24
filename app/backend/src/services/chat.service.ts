@@ -45,6 +45,7 @@ export async function getChatResponse(message: string): Promise<string> {
           email: company.email,
           address: company.address,
           whatsappNumber: company.whatsappNumber,
+          serviceCities: company.serviceCities,
         }
       : null,
     services: services.map((service) => ({
