@@ -42,6 +42,17 @@ function Home() {
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.14])
   const jsonLd = company ? localBusinessJson(company) : null
 
+  const statValue = (value: number | null | undefined): string =>
+    value === null || value === undefined
+      ? '—'
+      : value.toLocaleString('es-CO')
+
+  const stats = [
+    { label: 'clientes activos', value: statValue(company?.activeClients) },
+    { label: 'años de experiencia', value: statValue(company?.yearsOperating) },
+    { label: 'servicios al mes', value: statValue(company?.monthlyServices) },
+  ]
+
   return (
     <>
       <Seo
@@ -158,30 +169,16 @@ function Home() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.8 }}
             >
-              <div>
-                <dd className="stat-num font-display text-3xl font-bold text-brand-turq">
-                  —
-                </dd>
-                <dt className="mt-1 text-sm text-slate-500">
-                  clientes activos
-                </dt>
-              </div>
-              <div>
-                <dd className="stat-num font-display text-3xl font-bold text-brand-turq">
-                  —
-                </dd>
-                <dt className="mt-1 text-sm text-slate-500">
-                  años de operación
-                </dt>
-              </div>
-              <div>
-                <dd className="stat-num font-display text-3xl font-bold text-brand-turq">
-                  —
-                </dd>
-                <dt className="mt-1 text-sm text-slate-500">
-                  servicios al mes
-                </dt>
-              </div>
+              {stats.map((stat) => (
+                <div key={stat.label}>
+                  <dd className="stat-num font-display text-3xl font-bold text-brand-turq">
+                    {stat.value}
+                  </dd>
+                  <dt className="mt-1 text-sm text-slate-500">
+                    {stat.label}
+                  </dt>
+                </div>
+              ))}
               <div>
                 <dd className="stat-num font-display text-3xl font-bold text-brand-gold">
                   100%
