@@ -25,6 +25,7 @@ beforeEach(async () => {
       email: 'cotizaciones@highcleansas.com',
       schedules: REAL_SCHEDULES,
       serviceCities: ['Bogotá', 'Villavicencio', 'Medellín', 'Cartagena'],
+      address: 'Calle 16 # 8A-53, Edificio Opolo, Bogotá',
     },
   })
   await prisma.service.createMany({
@@ -103,25 +104,29 @@ describe('POST /api/v1/chat', () => {
     expect(response.body.error).toMatchObject({ code: 'ValidationError' })
   })
 
-  it('responde con info de contacto y ciudades al preguntar dónde ubicarlos', async () => {
+  it('responde con info de contacto y ciudades al preguntar dónde ubicarlos — ciudades primero', async () => {
     const response = await request(app)
       .post('/api/v1/chat')
       .send({ message: 'en donde los puedo ubicar' })
 
     expect(response.status).toBe(200)
-    expect(response.body.response).toContain('cotizaciones@highcleansas.com')
+    // Debe empezar con "Prestamos servicio en:" (ciudades primero)
+    expect(response.body.response).toMatch(/^Prestamos servicio en:/)
     expect(response.body.response).toContain('Bogotá')
     expect(response.body.response).toContain('Villavicencio')
     expect(response.body.response).toContain('Medellín')
     expect(response.body.response).toContain('Cartagena')
+    expect(response.body.response).toContain('Nuestra oficina está en:')
   })
 
-  it('prioriza contacto sobre precios cuando pregunta correo para cotización', async () => {
+  it('prioriza correo al preguntar a qué correo enviar cotización — email primero', async () => {
     const response = await request(app)
       .post('/api/v1/chat')
       .send({ message: 'a que correo puedo enviar mi cotizacion' })
 
     expect(response.status).toBe(200)
+    // Debe empezar con el correo
+    expect(response.body.response).toMatch(/^Puedes enviar tu cotizaci[oó]n a /)
     expect(response.body.response).toContain('cotizaciones@highcleansas.com')
     expect(response.body.response).not.toContain('página de Servicios')
   })
