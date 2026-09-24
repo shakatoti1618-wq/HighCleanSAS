@@ -3,6 +3,14 @@ import type { Company, CompanyValue, GalleryImage, Service } from './api.ts'
 export type ReviewStatus = 'PENDING' | 'APPROVED' | 'REJECTED'
 export type JobStatus = 'NEW' | 'REVIEWED'
 
+export interface ServiceOptionInput {
+  label: string
+  price: number
+  note?: string | null
+  group?: string | null
+  sortOrder: number
+}
+
 export interface AdminReview {
   id: string
   author: string
@@ -65,6 +73,9 @@ export interface CompanyUpdateInput {
   address?: string
   schedules?: string
   serviceCities?: string[]
+  activeClients?: number
+  yearsOperating?: number
+  monthlyServices?: number
 }
 
 async function request<T>(
@@ -143,6 +154,16 @@ export function updateService(
 
 export function deleteService(id: string): Promise<void> {
   return request<void>(`/api/v1/admin/services/${id}`, { method: 'DELETE' })
+}
+
+export function replaceServiceOptions(
+  id: string,
+  options: ServiceOptionInput[],
+): Promise<Service> {
+  return request<Service>(`/api/v1/admin/services/${id}/options`, {
+    method: 'PUT',
+    body: JSON.stringify({ options }),
+  })
 }
 
 export function fetchAdminReviews(): Promise<AdminReview[]> {
