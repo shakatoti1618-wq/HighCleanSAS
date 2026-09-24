@@ -28,9 +28,11 @@ beforeEach(async () => {
   await prisma.session.deleteMany()
   await prisma.review.deleteMany()
   await prisma.user.deleteMany({ where: { email: TEST_ADMIN_EMAIL } })
-  await prisma.service.deleteMany({ where: { companyId: TEST_COMPANY_ID } })
-  await prisma.galleryImage.deleteMany({ where: { companyId: TEST_COMPANY_ID } })
-  await prisma.company.deleteMany()
+  await prisma.service.deleteMany()
+  await prisma.galleryImage.deleteMany()
+  await prisma.company.deleteMany({
+    where: { NOT: { services: { some: {} } } },
+  })
 
   await prisma.company.create({
     data: { id: TEST_COMPANY_ID, name: TEST_COMPANY_NAME, serviceCities: [] },
