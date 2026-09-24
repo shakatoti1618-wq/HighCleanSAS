@@ -77,24 +77,48 @@ function listValues(context: ChatContext): string {
     .join('\n')
 }
 
-function contactInfo(context: ChatContext): string {
+type ContactPriority = 'email' | 'location' | 'general'
+
+function contactInfo(context: ChatContext, priority: ContactPriority = 'general'): string {
   const company = context.company
-  const channels: string[] = []
+  const phone = company?.phone
+  const whatsapp = company?.whatsappNumber
+  const email = company?.email
+  const address = company?.address
+  const cities = company?.serviceCities?.length ? company.serviceCities.join(', ') : null
 
-  if (company?.phone) channels.push(`teléfono ${company.phone}`)
-  if (company?.whatsappNumber)
-    channels.push(`WhatsApp al ${company.whatsappNumber}`)
-  if (company?.email) channels.push(`correo ${company.email}`)
-  if (company?.address) channels.push(`dirección: ${company.address}`)
-  if (company?.serviceCities && company.serviceCities.length > 0) {
-    channels.push(`Prestamos servicio en: ${company.serviceCities.join(', ')}`)
+  const parts: string[] = []
+
+  switch (priority) {
+    case 'email':
+      if (email) parts.push(`Puedes enviar tu cotización a ${email}.`)
+      if (whatsapp) parts.push(`También puedes escribirnos por WhatsApp al ${whatsapp}.`)
+      if (phone) parts.push(`O llámanos al ${phone}.`)
+      break
+
+    case 'location':
+      if (cities) parts.push(`Prestamos servicio en: ${cities}.`)
+      if (address) parts.push(`Nuestra oficina está en: ${address}.`)
+      if (phone) parts.push(`Teléfono: ${phone}.`)
+      if (whatsapp) parts.push(`WhatsApp: ${whatsapp}.`)
+      if (email) parts.push(`Correo: ${email}.`)
+      break
+
+    default:
+      const channels: string[] = []
+      if (phone) channels.push(`teléfono ${phone}`)
+      if (whatsapp) channels.push(`WhatsApp al ${whatsapp}`)
+      if (email) channels.push(`correo ${email}`)
+      if (address) channels.push(`dirección: ${address}`)
+      if (cities) channels.push(`Prestamos servicio en: ${cities}`)
+
+      if (channels.length === 0) {
+        return `Aún no tengo los datos de contacto confirmados. ${TO_CONTACT_HINT}`
+      }
+      return `Puedes contactarlos por ${channels.join(', ')}.`
   }
 
-  if (channels.length === 0) {
-    return `Aún no tengo los datos de contacto confirmados. ${TO_CONTACT_HINT}`
-  }
-
-  return `Puedes contactarlos por ${channels.join(', ')}.`
+  return parts.join(' ')
 }
 
 export class KnowledgeChatProvider implements ChatProvider {
@@ -110,7 +134,13 @@ export class KnowledgeChatProvider implements ChatProvider {
 
     // Contacto ANTES que precios: si el mensaje menciona contacto/cotización + palabras de contacto, prioriza contacto
     if (hasAny(text, CONTACT_KEYWORDS)) {
-      return contactInfo(context)
+      let priority: ContactPriority = 'general'
+      if (hasAny(text, ['correo', 'email', 'cotizacion', 'cotizar', 'cotización', 'cotiza'])) {
+        priority = 'email'
+      } else if (hasAny(text, ['ubicacion', 'ubicados', 'ubicarse', 'ubicar', 'ubicada', 'ubicadas', 'encontrar', 'quedan', 'donde estan', 'donde queda', 'donde queda', 'donde esta', 'direccion', 'ubicacion'])) {
+        priority = 'location'
+      }
+      return contactInfo(context, priority)
     }
 
     if (hasAny(text, PRICING_KEYWORDS)) {
