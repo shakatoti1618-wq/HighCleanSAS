@@ -33,7 +33,7 @@ function buildSections(company: Company | null): Section[] {
         <ul className="mt-3 list-disc space-y-1.5 pl-5 text-slate-600">
           <li>Correo de contacto: {contactEmail}</li>
           <li>
-            Dirección: TODO — dirección física o electrónica de la empresa
+            Dirección: {company?.address ?? '—'}
           </li>
           <li>Teléfono: {contactPhone}</li>
         </ul>
