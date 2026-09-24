@@ -181,6 +181,55 @@ describe('CRUD administrativo de servicios', () => {
     expect(response.status).toBe(404)
     expect(response.body.error).toMatchObject({ code: 'NotFoundError' })
   })
+
+  it('reemplaza las modalidades de un servicio', async () => {
+    const createRes = await agent
+      .post('/api/v1/admin/services')
+      .send({ name: 'Aseo general' })
+    const serviceId: string = createRes.body.id
+
+    const putRes = await agent
+      .put(`/api/v1/admin/services/${serviceId}/options`)
+      .send({
+        options: [
+          { label: 'Tiempo Completo', price: 3350000, sortOrder: 1 },
+          { label: 'Medio Tiempo', price: 2200000, note: 'Incluye planchado', sortOrder: 2 },
+        ],
+      })
+
+    expect(putRes.status).toBe(200)
+    expect(putRes.body.options).toHaveLength(2)
+    expect(putRes.body.options[0]).toMatchObject({
+      label: 'Tiempo Completo',
+      price: 3350000,
+      sortOrder: 1,
+    })
+    expect(putRes.body.options[1]).toMatchObject({
+      label: 'Medio Tiempo',
+      price: 2200000,
+      note: 'Incluye planchado',
+    })
+
+    const replaceRes = await agent
+      .put(`/api/v1/admin/services/${serviceId}/options`)
+      .send({ options: [{ label: 'Solo Días', price: 135000, note: null, group: null, sortOrder: 1 }] })
+
+    expect(replaceRes.status).toBe(200)
+    expect(replaceRes.body.options).toHaveLength(1)
+    expect(replaceRes.body.options[0].note).toBeNull()
+  })
+
+  it('rechaza un reemplazo de modalidades vacío con 400', async () => {
+    const createRes = await agent
+      .post('/api/v1/admin/services')
+      .send({ name: 'Aseo general' })
+
+    const response = await agent
+      .put(`/api/v1/admin/services/${createRes.body.id}/options`)
+      .send({ options: [] })
+
+    expect(response.status).toBe(400)
+  })
 })
 
 describe('Reseñas administrativas', () => {
@@ -332,6 +381,9 @@ describe('Empresa administrativa', () => {
       saved.set('address', company.address)
       saved.set('schedules', company.schedules)
       saved.set('serviceCities', company.serviceCities)
+      saved.set('activeClients', company.activeClients)
+      saved.set('yearsOperating', company.yearsOperating)
+      saved.set('monthlyServices', company.monthlyServices)
     }
   })
 
@@ -355,6 +407,9 @@ describe('Empresa administrativa', () => {
           address: saved.get('address') as string | null,
           schedules: saved.get('schedules') as string | null,
           serviceCities: saved.get('serviceCities') as string[],
+          activeClients: saved.get('activeClients') as number | null,
+          yearsOperating: saved.get('yearsOperating') as number | null,
+          monthlyServices: saved.get('monthlyServices') as number | null,
         },
       })
     }
@@ -385,6 +440,25 @@ describe('Empresa administrativa', () => {
 
     expect(response.status).toBe(200)
     expect(response.body.nit).toBe('901330960-1')
+  })
+
+  it('actualiza las estadísticas de la empresa', async () => {
+    const response = await agent
+      .patch('/api/v1/admin/company')
+      .send({ activeClients: 500, yearsOperating: 8, monthlyServices: 700 })
+
+    expect(response.status).toBe(200)
+    expect(response.body.activeClients).toBe(500)
+    expect(response.body.yearsOperating).toBe(8)
+    expect(response.body.monthlyServices).toBe(700)
+  })
+
+  it('rechaza estadísticas no enteras con 400', async () => {
+    const response = await agent
+      .patch('/api/v1/admin/company')
+      .send({ activeClients: 500.5 })
+
+    expect(response.status).toBe(400)
   })
 
   it('rechaza un NIT con formato inválido', async () => {
