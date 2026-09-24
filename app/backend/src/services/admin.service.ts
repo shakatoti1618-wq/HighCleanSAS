@@ -14,6 +14,7 @@ import {
   deleteService,
   findServiceById,
   findServices,
+  replaceServiceOptions,
   updateService,
 } from '../repositories/service.repository.js'
 import {
@@ -124,6 +125,23 @@ export async function updateServiceAdmin(
     throw new NotFoundError('Servicio no encontrado')
   }
   return updateService(id, data)
+}
+
+export async function replaceServiceOptionsAdmin(
+  id: string,
+  options: {
+    label: string
+    price: number
+    note?: string | null
+    group?: string | null
+    sortOrder: number
+  }[],
+) {
+  const service = await findServiceById(id)
+  if (!service) {
+    throw new NotFoundError('Servicio no encontrado')
+  }
+  return replaceServiceOptions(id, options)
 }
 
 export type MediaFile = {
