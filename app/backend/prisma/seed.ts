@@ -90,6 +90,7 @@ const GALLERY_SEED = Array.from({ length: 8 }, (_, index) => ({
 })).concat({
   url: `${MEDIA_BASE_URL}/gallery/galeria9.mp4`,
   alt: 'Galería de High Clean — video de ejemplo',
+  type: 'VIDEO',
 })
 
 interface ServiceOptionSeed {
