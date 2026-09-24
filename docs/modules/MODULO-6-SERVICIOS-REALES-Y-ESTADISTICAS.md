@@ -66,7 +66,7 @@ frontend
 - Backend: **96/96 tests** ✅, coverage sobre umbral (Stmts 82.92 / Branch 63.04 / Funcs 89.09 / Lines 83.92), lint/typecheck/build ✅.
 - Frontend: **59/59 tests** ✅ (nuevos: `formatPrices`, `Servicios` público), coverage sobre umbral (41.51/29.65/32/42.95), lint/typecheck/build ✅.
 - Seed + API real verificados: 7 servicios con foto (URL R2 2xx) + opciones; stats 500/8/700.
-- Recordatorio transversal: corridas de tests borran la empresa/servicios/galería → restaurar siempre con `npm run db:seed`.
+- Recordatorio transversal: desde la BD de test aislada (`DATABASE_URL_TEST`, fail-closed en test), la suite ya no borra `highclean`; el `db:seed` se reserva para (re)cargar datos reales.
 
 ## Git (17 commits, por capa — §17.1)
 1. `feat: add ServiceOption model and company stats to schema`
@@ -86,7 +86,7 @@ frontend
 15. `feat: add service options editor to admin`
 16. `feat: add company stats inputs to admin`
 17. `test: add formatPrices and public Servicios tests`
-- **Push pendiente de autorización del usuario** (regla 5).
+- **Pusheados** (autorización del usuario) junto con 2 fixes post-verificación: `fix: mark gallery video type in seed` y `fix: set existing gallery video record type to VIDEO` (el `GALLERY_SEED` dejaba `galeria9.mp4` como `type=IMAGE` → la rama `<video>` del frontend jamás corría; ver Problemas y soluciones).
 
 ## Problemas y soluciones
 - **`@unique` en `Service.name`**: migración falló en entorno no interactivo → revertido; upsert manual (D3).

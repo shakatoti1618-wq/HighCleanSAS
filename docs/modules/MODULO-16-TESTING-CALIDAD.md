@@ -54,7 +54,7 @@ npm run coverage (frontend) ──► vitest run --coverage
 - `npm run coverage` backend: **68/68 tests** ✅, umbrales cumplidos ✅.
 - `npm run coverage` frontend: **45/45 tests** ✅, umbrales cumplidos ✅.
 - `npm run lint` / `typecheck` / `build` (ambos paquetes) ✅.
-- Recordatorio transversal: una corrida de la suite backend borra la empresa real → restaurar con `npm run db:seed`.
+- Recordatorio transversal: desde la BD de test aislada (`DATABASE_URL_TEST`, fail-closed en test) la suite ya no borra la data real de desarrollo.
 
 ## Git (commits planificados, por capa)
 1. `chore: add vitest v8 coverage provider to backend and frontend`
@@ -67,3 +67,18 @@ npm run coverage (frontend) ──► vitest run --coverage
 - Backend: `src/providers` (integración AI/email) es lo menos cubierto (branch ~31 %) — candidato natural para tests con mocks.
 - El CI no hace deploy; en M17 se decidirá el hosting y se añadirá la URL de producción (variable/secret) + job de deploy.
 - GitHub Actions requiere el repositorio con el contenido; la primera corrida real se verá tras el push de este módulo.
+
+## Actualización: BD de test aislada (`DATABASE_URL_TEST`)
+Las suites de Vitest corren contra una base **`highclean_test`** separada, por lo que ya **no tocan la base de desarrollo `highclean`** (antes, cada corrida borraba services/gallery/company reales y había que restaurar con `db:seed`; Gotcha eliminado).
+
+### Cómo funciona
+- `src/config/env.ts`: `DATABASE_URL_TEST` es opcional en dev/prod, pero **obligatoria en `NODE_ENV=test` y debe ser distinta de `DATABASE_URL`** (fail-closed: si falta o es igual, el backend no arranca los tests — imposible borrar la BD dev por error de configuración). Bajo test, la URL efectiva de Prisma pasa a ser `DATABASE_URL_TEST`.
+- `vitest.config.ts`: fuerza `NODE_ENV: 'test'` (además de `CORS_ORIGIN`) para que el guard sea determinista aunque `.env` defina otra cosa.
+- Script **idempotente y cross-platform** `scripts/one-off/setup-test-db.ts` → `npm run db:test:setup`: crea la BD de test si no existe (conecta al servidor como el rol de `DATABASE_URL`, que debe tener `CREATEDB`) y aplica `prisma migrate deploy` contra ella. Se reutiliza igual en CI.
+- `.env` local y `.env.example` documentan la variable.
+- CI (`.github/workflows/ci.yml`): se añadió `DATABASE_URL_TEST` y el step `npm run db:test:setup` antes del coverage (en el servicio `postgres:17-alpine`, `highclean` es superusuario y el mismo script funciona).
+
+### Verificación
+- Suite backend: **99/99 tests** ✅ (3 nuevos en `env.test.ts`: ausencia de `DATABASE_URL_TEST` → rechaza; `== DATABASE_URL` → rechaza; distinta → acepta).
+- Tras una corrida completa, `highclean` dev quedó intacta (services 7 / options 23 / stats 500-8-700 / gallery 8 IMAGE + 1 VIDEO) mientras `highclean_test` quedó vacía (0/0/0), lo que confirma el aislamiento.
+- No se necesitan migraciones nuevas (la BD test usa el mismo schema). No hace falta sembrar la BD test: cada suite crea sus propios fixtures.
