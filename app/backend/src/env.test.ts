@@ -160,6 +160,50 @@ describe('envSchema en desarrollo', () => {
   })
 })
 
+describe('envSchema en modo test (BD aislada)', () => {
+  const testBase = {
+    NODE_ENV: 'test' as const,
+    DATABASE_URL:
+      'postgresql://usuario:clave@localhost:5432/highclean?schema=public',
+    DATABASE_URL_TEST:
+      'postgresql://usuario:clave@localhost:5432/highclean_test?schema=public',
+  }
+
+  it('rechaza la ausencia de DATABASE_URL_TEST', () => {
+    const result = envSchema.safeParse({
+      ...testBase,
+      DATABASE_URL_TEST: undefined,
+    })
+
+    expect(result.success).toBe(false)
+    if (!result.success) {
+      expect(result.error.issues.map((issue) => issue.path.join('.'))).toContain(
+        'DATABASE_URL_TEST',
+      )
+    }
+  })
+
+  it('rechaza DATABASE_URL_TEST igual a DATABASE_URL (no borrar la BD dev)', () => {
+    const result = envSchema.safeParse({
+      ...testBase,
+      DATABASE_URL_TEST: testBase.DATABASE_URL,
+    })
+
+    expect(result.success).toBe(false)
+    if (!result.success) {
+      expect(result.error.issues.map((issue) => issue.path.join('.'))).toContain(
+        'DATABASE_URL_TEST',
+      )
+    }
+  })
+
+  it('acepta una DATABASE_URL_TEST distinta de la de desarrollo', () => {
+    const result = envSchema.safeParse(testBase)
+
+    expect(result.success).toBe(true)
+  })
+})
+
 describe('envSchema: política de contraseña del administrador', () => {
   it('rechaza una ADMIN_PASSWORD corta o sin letra o sin número', () => {
     for (const adminPassword of ['corta123', 'soloLetrasSinNumeros', '123456789012']) {

@@ -44,8 +44,29 @@ export const envSchema = z
     DATABASE_URL: z
       .string()
       .min(1, 'DATABASE_URL es obligatorio (ver .env / .env.example)'),
+    DATABASE_URL_TEST: z
+      .string()
+      .min(1, 'DATABASE_URL_TEST debe ser una URL de conexión válida')
+      .optional(),
   })
   .superRefine((values, ctx) => {
+    if (values.NODE_ENV === 'test') {
+      if (!values.DATABASE_URL_TEST) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            'DATABASE_URL_TEST es obligatorio en modo test (las pruebas NO deben tocar la base de desarrollo)',
+          path: ['DATABASE_URL_TEST'],
+        })
+      } else if (values.DATABASE_URL_TEST === values.DATABASE_URL) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            'DATABASE_URL_TEST no puede ser igual a DATABASE_URL (evita borrar la base de desarrollo)',
+          path: ['DATABASE_URL_TEST'],
+        })
+      }
+    }
     if (values.NODE_ENV !== 'production') return
     if (values.SESSION_SECRET === DEFAULT_SESSION_SECRET) {
       ctx.addIssue({
@@ -139,4 +160,10 @@ if (!parsed.success) {
   process.exit(1)
 }
 
-export const env = parsed.data
+export const env = {
+  ...parsed.data,
+  DATABASE_URL:
+    parsed.data.NODE_ENV === 'test'
+      ? (parsed.data.DATABASE_URL_TEST as string)
+      : parsed.data.DATABASE_URL,
+}
