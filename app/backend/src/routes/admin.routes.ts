@@ -16,6 +16,7 @@ import {
   listServicesHandler,
   markJobReviewedHandler,
   markMessageReadHandler,
+  replaceServiceOptionsHandler,
   updateCompanyHandler,
   updateReviewStatusHandler,
   updateServiceHandler,
@@ -40,6 +41,7 @@ adminRouter.patch('/company', updateCompanyHandler)
 adminRouter.get('/services', listServicesHandler)
 adminRouter.post('/services', createServiceHandler)
 adminRouter.post('/services/:id/photo', uploadServicePhoto, uploadServicePhotoHandler)
+adminRouter.put('/services/:id/options', replaceServiceOptionsHandler)
 adminRouter.patch('/services/:id', updateServiceHandler)
 adminRouter.delete('/services/:id', deleteServiceHandler)
 
