@@ -1,10 +1,11 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { Loader2, Plus, Trash2 } from 'lucide-react'
+import { Film, Loader2, Plus, Trash2, Upload } from 'lucide-react'
 import type { GalleryImage } from '../../lib/api.ts'
 import {
   createGalleryImage,
   deleteGalleryImage,
   fetchAdminGallery,
+  uploadGalleryFile,
 } from '../../lib/admin.ts'
 
 const inputClass =
@@ -14,6 +15,8 @@ function Galeria() {
   const [images, setImages] = useState<GalleryImage[]>([])
   const [url, setUrl] = useState('')
   const [alt, setAlt] = useState('')
+  const [file, setFile] = useState<File | null>(null)
+  const [uploadAlt, setUploadAlt] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -67,6 +70,34 @@ function Galeria() {
     }
   }
 
+  const handleUpload = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    if (busy) return
+    if (!file) {
+      setError('Selecciona un archivo para subir')
+      return
+    }
+
+    setBusy(true)
+    setError(null)
+
+    try {
+      const created = await uploadGalleryFile(file, uploadAlt)
+      setImages((previous) => [...previous, created])
+      setFile(null)
+      setUploadAlt('')
+    } catch (uploadError) {
+      setError(
+        uploadError instanceof Error
+          ? uploadError.message
+          : 'No se pudo subir el archivo',
+      )
+    } finally {
+      setBusy(false)
+    }
+  }
+
   const handleDelete = async (image: GalleryImage) => {
     if (busy) return
 
@@ -96,8 +127,8 @@ function Galeria() {
         Galería
       </h1>
       <p className="mt-1 text-sm text-slate-600">
-        Agrega o quita imágenes mediante su URL pública. La carga de archivos se
-        habilita en una fase posterior.
+        Sube imágenes o videos desde tu dispositivo o agrega un archivo desde su
+        URL pública.
       </p>
 
       {error && (
@@ -110,11 +141,60 @@ function Galeria() {
       )}
 
       <form
+        onSubmit={handleUpload}
+        className="mt-6 space-y-3 rounded-sm border border-brand-turqSoft bg-white p-6 shadow-md"
+      >
+        <h2 className="font-display text-lg font-semibold text-brand-ink">
+          Subir archivo
+        </h2>
+        <label className="block">
+          <span className="mb-1.5 block text-sm font-medium text-brand-ink">
+            Imagen o video
+          </span>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp,video/mp4,video/webm"
+            onChange={(event) => setFile(event.target.files?.[0] ?? null)}
+            className="w-full rounded-sm border border-slate-200 bg-white px-4 py-3 text-slate-800 file:mr-3 file:rounded-sm file:border-0 file:bg-brand-turqSoft file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-brand-turqDeep"
+          />
+          <span className="mt-1 block text-xs text-slate-500">
+            Imágenes hasta 10 MB (jpg, png, webp) y videos hasta 25 MB (mp4,
+            webm).
+          </span>
+        </label>
+        <label className="block">
+          <span className="mb-1.5 block text-sm font-medium text-brand-ink">
+            Texto alternativo
+          </span>
+          <input
+            type="text"
+            value={uploadAlt}
+            onChange={(event) => setUploadAlt(event.target.value)}
+            maxLength={300}
+            className={inputClass}
+            placeholder="Describe el archivo para accesibilidad y SEO"
+          />
+        </label>
+        <button
+          type="submit"
+          disabled={busy}
+          className="inline-flex items-center gap-2 rounded-sm bg-brand-turq px-5 py-2.5 font-semibold text-white transition-colors hover:bg-brand-turqDeep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-turq focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {busy ? (
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+          ) : (
+            <Upload className="h-4 w-4" aria-hidden="true" />
+          )}
+          Subir archivo
+        </button>
+      </form>
+
+      <form
         onSubmit={handleSubmit}
         className="mt-6 space-y-3 rounded-sm border border-brand-turqSoft bg-white p-6 shadow-md"
       >
         <h2 className="font-display text-lg font-semibold text-brand-ink">
-          Agregar imagen
+          Agregar desde URL
         </h2>
         <label className="block">
           <span className="mb-1.5 block text-sm font-medium text-brand-ink">
@@ -173,12 +253,30 @@ function Galeria() {
               key={image.id}
               className="group overflow-hidden rounded-sm border border-brand-turqSoft bg-white shadow-md"
             >
-              <img
-                src={image.url}
-                alt={image.alt ?? ''}
-                loading="lazy"
-                className="h-44 w-full object-cover"
-              />
+              <div className="relative">
+                {image.type === 'VIDEO' ? (
+                  <>
+                    <video
+                      src={image.url}
+                      controls
+                      playsInline
+                      preload="metadata"
+                      className="h-44 w-full bg-slate-900 object-cover"
+                    />
+                    <span className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-sm bg-brand-ink/80 px-2 py-1 text-xs font-semibold text-white">
+                      <Film className="h-3 w-3" aria-hidden="true" />
+                      Video
+                    </span>
+                  </>
+                ) : (
+                  <img
+                    src={image.url}
+                    alt={image.alt ?? ''}
+                    loading="lazy"
+                    className="h-44 w-full object-cover"
+                  />
+                )}
+              </div>
               <div className="flex items-center justify-between gap-2 p-3">
                 <p className="truncate text-sm text-slate-600">
                   {image.alt ?? 'Sin descripción'}

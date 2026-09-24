@@ -71,9 +71,11 @@ async function request<T>(
   path: string,
   init?: RequestInit,
 ): Promise<T> {
+  const isFormData = init?.body instanceof FormData
+
   const response = await fetch(path, {
     credentials: 'include',
-    headers: init?.body
+    headers: init?.body && !isFormData
       ? { 'Content-Type': 'application/json' }
       : undefined,
     ...init,
@@ -183,6 +185,20 @@ export function createGalleryImage(url: string, alt: string): Promise<GalleryIma
 
 export function deleteGalleryImage(id: string): Promise<void> {
   return request<void>(`/api/v1/admin/gallery/${id}`, { method: 'DELETE' })
+}
+
+export function uploadGalleryFile(
+  file: File,
+  alt: string,
+): Promise<GalleryImage> {
+  const formData = new FormData()
+  if (alt) formData.append('alt', alt)
+  formData.append('file', file)
+
+  return request<GalleryImage>('/api/v1/admin/gallery/upload', {
+    method: 'POST',
+    body: formData,
+  })
 }
 
 export function fetchAdminJobs(): Promise<JobApplication[]> {
