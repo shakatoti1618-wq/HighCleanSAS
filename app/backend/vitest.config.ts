@@ -5,7 +5,10 @@ export default defineConfig({
     environment: 'node',
     include: ['src/**/*.test.ts'],
     fileParallelism: false,
-    env: { CORS_ORIGIN: 'http://localhost:5173' },
+    env: {
+      NODE_ENV: 'test',
+      CORS_ORIGIN: 'http://localhost:5173',
+    },
     coverage: {
       provider: 'v8',
       include: ['src/**'],
