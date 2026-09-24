@@ -19,6 +19,8 @@ import {
   updateCompanyHandler,
   updateReviewStatusHandler,
   updateServiceHandler,
+  uploadGalleryMediaHandler,
+  uploadServicePhotoHandler,
 } from '../controllers/admin.controller.js'
 import { requireAuth } from '../middleware/requireAuth.js'
 import { requireAdmin } from '../middleware/requireAdmin.js'
@@ -26,6 +28,7 @@ import {
   noIndexHeaders,
   noStoreHeaders,
 } from '../middleware/securityHeaders.js'
+import { uploadGalleryMedia, uploadServicePhoto } from '../middleware/uploadMedia.js'
 
 const adminRouter = Router()
 
@@ -36,6 +39,7 @@ adminRouter.patch('/company', updateCompanyHandler)
 
 adminRouter.get('/services', listServicesHandler)
 adminRouter.post('/services', createServiceHandler)
+adminRouter.post('/services/:id/photo', uploadServicePhoto, uploadServicePhotoHandler)
 adminRouter.patch('/services/:id', updateServiceHandler)
 adminRouter.delete('/services/:id', deleteServiceHandler)
 
@@ -49,6 +53,7 @@ adminRouter.delete('/messages/:id', deleteMessageHandler)
 
 adminRouter.get('/gallery', listGalleryHandler)
 adminRouter.post('/gallery', createGalleryImageHandler)
+adminRouter.post('/gallery/upload', uploadGalleryMedia, uploadGalleryMediaHandler)
 adminRouter.delete('/gallery/:id', deleteGalleryImageHandler)
 
 adminRouter.get('/jobs', listJobsHandler)
