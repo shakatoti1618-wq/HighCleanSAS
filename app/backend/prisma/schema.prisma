@@ -47,6 +47,9 @@ model Company {
   email          String?
   address        String?
   schedules      String?
+  activeClients  Int?
+  yearsOperating Int?
+  monthlyServices Int?
   services       Service[]
   reviews        Review[]
   gallery        GalleryImage[]
@@ -57,14 +60,30 @@ model Company {
 }
 
 model Service {
-  id          String   @id @default(uuid())
+  id          String          @id @default(uuid())
   name        String
   description String?
   imageUrl    String?
   companyId   String
-  company     Company  @relation(fields: [companyId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  company     Company         @relation(fields: [companyId], references: [id])
+  options     ServiceOption[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model ServiceOption {
+  id        String   @id @default(uuid())
+  serviceId String
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  label     String
+  price     Int
+  note      String?
+  group     String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([serviceId])
 }
 
 enum GalleryType {
