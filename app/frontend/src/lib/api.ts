@@ -24,6 +24,7 @@ export interface Service {
   id: string
   name: string
   description: string | null
+  imageUrl: string | null
   companyId: string
 }
 
@@ -31,6 +32,7 @@ export interface GalleryImage {
   id: string
   url: string
   alt: string | null
+  type: 'IMAGE' | 'VIDEO'
   companyId: string
   createdAt: string
 }

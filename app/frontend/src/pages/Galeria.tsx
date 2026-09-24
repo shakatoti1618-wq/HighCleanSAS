@@ -74,13 +74,23 @@ function Galeria() {
               variants={item}
               className="group relative overflow-hidden rounded-sm bg-white shadow-md"
             >
-              <img
-                src={image.url}
-                alt={image.alt ?? 'Fotografía del trabajo de High Clean SAS'}
-                loading="lazy"
-                className="h-72 w-full object-cover transition duration-500 ease-out group-hover:scale-105"
-              />
-              <figcaption className="absolute inset-0 flex items-end bg-linear-to-t from-brand-ink/90 via-brand-ink/25 to-transparent p-6">
+              {image.type === 'VIDEO' ? (
+                <video
+                  src={image.url}
+                  controls
+                  playsInline
+                  preload="metadata"
+                  className="h-72 w-full bg-slate-900 object-cover"
+                />
+              ) : (
+                <img
+                  src={image.url}
+                  alt={image.alt ?? 'Fotografía del trabajo de High Clean SAS'}
+                  loading="lazy"
+                  className="h-72 w-full object-cover transition duration-500 ease-out group-hover:scale-105"
+                />
+              )}
+              <figcaption className="pointer-events-none absolute inset-0 flex items-end bg-linear-to-t from-brand-ink/90 via-brand-ink/25 to-transparent p-6">
                 <p className="font-display text-lg font-semibold leading-snug text-white">
                   {image.alt ?? TODO_TEXT}
                 </p>

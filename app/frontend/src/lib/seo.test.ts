@@ -240,7 +240,7 @@ describe('seo', () => {
 
   describe('servicesJson', () => {
     const services: Service[] = [
-      { id: 's1', name: 'Aseo general', description: 'Limpieza integral.', companyId: 'id' },
+      { id: 's1', name: 'Aseo general', description: 'Limpieza integral.', imageUrl: null, companyId: 'id' },
     ]
 
     it('arma un ItemList con los servicios reales', () => {
