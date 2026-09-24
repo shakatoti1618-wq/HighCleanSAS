@@ -123,3 +123,11 @@ export const createGalleryImageSchema = z.object({
     .max(300, 'El texto alternativo no puede superar los 300 caracteres')
     .optional(),
 })
+
+export const galleryUploadSchema = z.object({
+  alt: z
+    .string()
+    .trim()
+    .max(300, 'El texto alternativo no puede superar los 300 caracteres')
+    .optional(),
+})
