@@ -37,7 +37,9 @@ import {
   updateJobApplicationStatus,
 } from '../repositories/job-application.repository.js'
 import type { JobFieldsInput } from '../schemas/jobs.schema.js'
-import { NotFoundError } from '../utils/httpError.js'
+import { NotFoundError, ValidationError } from '../utils/httpError.js'
+import { extnameOf, mediaTypeOf, safeObjectKey, slugify } from '../utils/media.js'
+import { deleteObjectIfManaged, uploadObject } from './storage.service.js'
 import type { ReviewStatus } from '../generated/prisma/client.js'
 
 export async function getDashboardStats() {
@@ -124,10 +126,58 @@ export async function updateServiceAdmin(
   return updateService(id, data)
 }
 
+export type MediaFile = {
+  originalName: string
+  mimetype: string
+  size: number
+  data: Buffer
+}
+
+export async function uploadServicePhotoAdmin(id: string, file: MediaFile) {
+  const service = await findServiceById(id)
+  if (!service) {
+    throw new NotFoundError('Servicio no encontrado')
+  }
+
+  const ext = extnameOf(file.originalName) ?? '.jpg'
+  const key = `services/${slugify(service.name)}${ext}`
+  const { url } = await uploadObject(
+    key,
+    Uint8Array.from(file.data),
+    file.mimetype,
+  )
+
+  return updateService(id, { imageUrl: url })
+}
+
+export async function uploadGalleryMediaAdmin(
+  file: MediaFile,
+  alt: string | null,
+) {
+  const company = await requireExistingCompany()
+
+  const type = mediaTypeOf(file.originalName)
+  if (!type) {
+    throw new ValidationError('Extensión de archivo no permitida')
+  }
+
+  const key = `gallery/${safeObjectKey(file.originalName)}`
+  const { url } = await uploadObject(
+    key,
+    Uint8Array.from(file.data),
+    file.mimetype,
+  )
+
+  return createGalleryImage(url, alt, company.id, type)
+}
+
 export async function deleteServiceAdmin(id: string) {
   const service = await findServiceById(id)
   if (!service) {
     throw new NotFoundError('Servicio no encontrado')
+  }
+  if (service.imageUrl) {
+    await deleteObjectIfManaged(service.imageUrl)
   }
   return deleteService(id)
 }
@@ -186,6 +236,7 @@ export async function deleteGalleryImageAdmin(id: string) {
   if (!image) {
     throw new NotFoundError('Imagen no encontrada')
   }
+  await deleteObjectIfManaged(image.url)
   return deleteGalleryImage(id)
 }
 
