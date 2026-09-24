@@ -60,10 +60,16 @@ model Service {
   id          String   @id @default(uuid())
   name        String
   description String?
+  imageUrl    String?
   companyId   String
   company     Company  @relation(fields: [companyId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+enum GalleryType {
+  IMAGE
+  VIDEO
 }
 
 enum ReviewStatus {
@@ -128,10 +134,11 @@ model JobApplication {
 }
 
 model GalleryImage {
-  id        String   @id @default(uuid())
+  id        String      @id @default(uuid())
   url       String
   alt       String?
+  type      GalleryType @default(IMAGE)
   companyId String
-  company   Company  @relation(fields: [companyId], references: [id])
-  createdAt DateTime @default(now())
+  company   Company     @relation(fields: [companyId], references: [id])
+  createdAt DateTime    @default(now())
 }
