@@ -1,5 +1,9 @@
 import '@testing-library/jest-dom/vitest'
 
+if (typeof window !== 'undefined') {
+  window.scrollTo = () => {}
+}
+
 class IntersectionObserverMock {
   readonly root: Element | Document | null = null
   readonly rootMargin: string = '0px'

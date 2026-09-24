@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Layout from './components/Layout.tsx'
 import ProtectedRoute from './components/ProtectedRoute.tsx'
+import ScrollToTop from './components/ScrollToTop.tsx'
 import AdminLayout from './components/AdminLayout.tsx'
 import Contacto from './pages/Contacto.tsx'
 import Galeria from './pages/Galeria.tsx'
@@ -24,7 +25,9 @@ const ResenasPublic = lazy(() => import('./pages/Resenas.tsx'))
 
 function App() {
   return (
-    <Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
       <Route path="login" element={<Login />} />
       <Route element={<Layout />}>
         <Route index element={<Home />} />
@@ -60,6 +63,7 @@ function App() {
         <Route path="cuenta" element={<Cuenta />} />
       </Route>
     </Routes>
+    </>
   )
 }
 

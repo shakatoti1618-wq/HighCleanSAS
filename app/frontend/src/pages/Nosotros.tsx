@@ -53,7 +53,7 @@ function Nosotros() {
           <motion.div
             initial={{ opacity: 0, x: -32 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.7, ease: EASE }}
           >
             <div className="mb-5 flex items-center gap-3">
@@ -152,7 +152,7 @@ function Nosotros() {
             className="relative"
             initial={{ opacity: 0, x: 32 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.7, ease: EASE }}
           >
             <div className="flex h-96 w-full items-center justify-center overflow-hidden rounded-sm bg-brand-turqSoft/40">
