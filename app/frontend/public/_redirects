@@ -1,3 +1,4 @@
+https://www.highcleansas.com/*  https://highcleansas.com/:splat  301!
 # Cloudflare Pages: fallback de rutas para la SPA (React Router). Las peticiones a /api/*
 # las intercepta el Worker; si algún día se quisiera cubrirlas también desde Pages Functions,
 # añadir aquí: /api/*  /api/*  200
