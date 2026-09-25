@@ -22,9 +22,53 @@
     <meta property="og:image:alt" content="Logo de High Clean SAS" />
     <meta name="twitter:card" content="summary" />
     <title>High Clean SAS — Servicios de limpieza</title>
+    <style>
+      #loading-screen {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%);
+        z-index: 9999;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+      #loading-screen.hidden {
+        opacity: 0;
+        visibility: hidden;
+      }
+      #loading-screen img {
+        width: 120px;
+        height: auto;
+        animation: pulse 2s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 0.8; }
+        50% { transform: scale(1.05); opacity: 1; }
+      }
+    </style>
   </head>
   <body>
+    <div id="loading-screen" id="loading-screen">
+      <img src="/logo-transparente.png" alt="High Clean SAS" />
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
+    <script>
+      // Hide loading screen when React app is mounted
+      document.addEventListener('DOMContentLoaded', function() {
+        const loadingScreen = document.getElementById('loading-screen');
+        const observer = new MutationObserver(function() {
+          const root = document.getElementById('root');
+          if (root && root.children.length > 0) {
+            loadingScreen.classList.add('hidden');
+            observer.disconnect();
+          }
+        });
+        observer.observe(document.getElementById('root'), { childList: true, subtree: true });
+        // Fallback: hide after 3 seconds max
+        setTimeout(function() {
+          loadingScreen.classList.add('hidden');
+        }, 3000);
+      });
+    </script>
