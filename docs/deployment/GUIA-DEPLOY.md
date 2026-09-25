@@ -170,9 +170,14 @@ curl -s https://highcleansas.com/api/v1/company         # JSON de la empresa
   si decides redirigir `www → apex` con una regla de redirect en Pages/Workers).
 - `VITE_SITE_URL=https://highcleansas.com` hace que canonical/OG/sitemap/robots/JSON-LD
   apunten al dominio definitivo desde el primer build.
-- **Search Console**: verificación pendiente del Módulo 18 (Google Search Console →
-  propiedad del dominio → sitemap → indexación). Un dominio recién registrado tarda en
-  aparecer; no es un error de la web.
+- **Search Console (Módulo 18)**: verificación completada ✅
+  1. **GSC → Add property** → Domain `highcleansas.com` → verificación DNS (auto en Cloudflare)
+  2. **Sitemaps** → Submit `https://highcleansas.com/sitemap.xml` → **Success**
+  3. **URL Inspection** → Request indexing para: `/`, `/servicios`, `/contacto`, `/trabaja-con-nosotros`, `/nosotros`, `/galeria`, `/resenas`, `/politica-de-datos`
+  4. **Monitoreo**: Coverage, Core Web Vitals, Performance, Security
+
+- `VITE_SITE_URL=https://highcleansas.com` hace que canonical/OG/sitemap/robots/JSON-LD
+  apunten al dominio definitivo desde el primer build.
 
 ## Checklist cuando agregues un módulo nuevo con cambios de BD
 
@@ -203,6 +208,7 @@ curl -s https://highcleansas.com/api/v1/company         # JSON de la empresa
 7. Chatbot responde con contacto/horarios reales (sin fallback).
 8. Refrescar el servicio por una pausa de 15 min → primera petición lenta (~30–60 s),
    luego responsivo.
+9. **GSC**: Sitemap enviado ✅, URLs indexadas solicitadas ✅, Coverage sin errores ✅.
 
 ## Rollback / recuperación
 
