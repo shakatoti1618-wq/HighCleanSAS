@@ -164,15 +164,13 @@ export class KnowledgeChatProvider implements ChatProvider {
       if (!context.company) {
         return `No tengo información de la empresa disponible por el momento. ${TO_CONTACT_HINT}`
       }
-      const parts = [context.company.name]
-      if (context.company.description) parts.push(context.company.description)
-      if (context.company.mission) parts.push(`Misión: ${context.company.mission}`)
-      if (context.company.vision) parts.push(`Visión: ${context.company.vision}`)
-      parts.push(`Valores:\n${listValues(context)}`)
-      if (parts.length === 1) {
-        return `Espero poder darte más detalles de ${companyName} pronto. ${TO_CONTACT_HINT}`
-      }
-      return parts.join('\n')
+      const company = context.company
+      const summary = [
+        company.name,
+        company.description ? company.description.split('\n')[0] : null,
+        company.mission ? `Misión: ${company.mission.split('\n')[0]}` : null,
+      ].filter(Boolean).join('. ')
+      return `${summary}. ${TO_CONTACT_HINT}`
     }
 
     if (hasAny(text, ['gracias', 'muchas gracias'])) {
