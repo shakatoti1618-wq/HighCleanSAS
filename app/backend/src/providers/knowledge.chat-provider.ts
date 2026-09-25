@@ -50,32 +50,17 @@ function normalize(text: string): string {
     .trim()
 }
 
+function limitParagraphs(text: string, maxParagraphs: number = 4): string {
+  const paragraphs = text.split('\n\n').filter(p => p.trim().length > 0)
+  if (paragraphs.length <= maxParagraphs) return text
+  return paragraphs.slice(0, maxParagraphs).join('\n\n')
+}
+
 function hasAny(text: string, keywords: string[]): boolean {
   return keywords.some((keyword) => text.includes(keyword))
 }
 
-function listServices(context: ChatContext): string {
-  if (context.services.length === 0) {
-    return `Todavía no tengo el portafolio de servicios confirmado. ${TO_CONTACT_HINT}`
-  }
 
-  return context.services
-    .map((service) => {
-      const base = `- ${service.name}`
-      return service.description ? `${base}: ${service.description}` : base
-    })
-    .join('\n')
-}
-
-function listValues(context: ChatContext): string {
-  const values = context.company?.values
-  if (!values || values.length === 0) {
-    return 'Todavía no tengo los valores confirmados.'
-  }
-  return values
-    .map((value) => `- ${value.name}: ${value.description}`)
-    .join('\n')
-}
 
 type ContactPriority = 'email' | 'location' | 'general'
 
@@ -113,12 +98,12 @@ function contactInfo(context: ChatContext, priority: ContactPriority = 'general'
       if (cities) channels.push(`Prestamos servicio en: ${cities}`)
 
       if (channels.length === 0) {
-        return `Aún no tengo los datos de contacto confirmados. ${TO_CONTACT_HINT}`
+        return limitParagraphs(`Aún no tengo los datos de contacto confirmados. ${TO_CONTACT_HINT}`)
       }
-      return `Puedes contactarlos por ${channels.join(', ')}.`
+      return limitParagraphs(`Puedes contactarlos por ${channels.join(', ')}.`)
   }
 
-  return parts.join(' ')
+  return limitParagraphs(parts.join(' '))
 }
 
 export class KnowledgeChatProvider implements ChatProvider {
@@ -129,7 +114,7 @@ export class KnowledgeChatProvider implements ChatProvider {
     if (
       hasAny(text, ['hola', 'holi', 'hello', 'hi ', 'buenos dias', 'buenas tardes', 'buenas noches'])
     ) {
-      return `¡Hola! Soy el asistente informativo de ${companyName}. Pregúntame por sus servicios, la empresa, horarios o cómo contactarlos.`
+      return limitParagraphs(`¡Hola! Soy el asistente informativo de ${companyName}. Pregúntame por sus servicios, la empresa, horarios o cómo contactarlos.`)
     }
 
     // Contacto ANTES que precios: si el mensaje menciona contacto/cotización + palabras de contacto, prioriza contacto
@@ -144,25 +129,31 @@ export class KnowledgeChatProvider implements ChatProvider {
     }
 
     if (hasAny(text, PRICING_KEYWORDS)) {
-      return `Puedes ver los precios de nuestros servicios en la página de Servicios. Para una cotización personalizada, contáctanos por WhatsApp o el formulario de contacto.`
+      return limitParagraphs(`Puedes ver los precios de nuestros servicios en la página de Servicios. Para una cotización personalizada, contáctanos por WhatsApp o el formulario de contacto.`)
     }
 
     if (hasAny(text, ['servicio', 'servicios', 'que hacen', 'que ofrecen', 'limpieza', 'aseo', 'trabajos', 'portfolio', 'portafolio'])) {
-      return `Estos son los servicios que tengo registrados de ${companyName}:\n${listServices(context)}`
+      if (context.services.length === 0) {
+        return limitParagraphs(`Todavía no tengo el portafolio de servicios confirmado. ${TO_CONTACT_HINT}`)
+      }
+      const serviceList = context.services.map((s, i) => `${i + 1}. ${s.name}`).join('\n')
+      return limitParagraphs(
+        `Estos son los servicios que ofrece ${companyName}:\n\n${serviceList}\n\n¿Sobre cuál te gustaría que te dé más detalles?`
+      )
     }
 
     if (hasAny(text, ['horario', 'horarios', 'atienden', 'abren', 'abierto', 'atencion'])) {
       if (context.company?.schedules) {
-        return `El horario de atención de ${companyName} es: ${context.company.schedules}.`
+        return limitParagraphs(`El horario de atención de ${companyName} es: ${context.company.schedules}.`)
       }
-      return `Todavía no tengo el horario de atención confirmado. ${TO_CONTACT_HINT}`
+      return limitParagraphs(`Todavía no tengo el horario de atención confirmado. ${TO_CONTACT_HINT}`)
     }
 
     if (
       hasAny(text, ['quien es', 'quienes son', 'empresa', 'sobre ustedes', 'high clean', 'que es'])
     ) {
       if (!context.company) {
-        return `No tengo información de la empresa disponible por el momento. ${TO_CONTACT_HINT}`
+        return limitParagraphs(`No tengo información de la empresa disponible por el momento. ${TO_CONTACT_HINT}`)
       }
       const company = context.company
       const summary = [
@@ -170,17 +161,17 @@ export class KnowledgeChatProvider implements ChatProvider {
         company.description ? company.description.split('\n')[0] : null,
         company.mission ? `Misión: ${company.mission.split('\n')[0]}` : null,
       ].filter(Boolean).join('. ')
-      return `${summary}. ${TO_CONTACT_HINT}`
+      return limitParagraphs(`${summary}. ${TO_CONTACT_HINT}`)
     }
 
     if (hasAny(text, ['gracias', 'muchas gracias'])) {
-      return `¡Con gusto! Si necesitas algo más, aquí estoy.`
+      return limitParagraphs(`¡Con gusto! Si necesitas algo más, aquí estoy.`)
     }
 
     if (hasAny(text, ['adios', 'chao', 'hasta luego', 'nos vemos'])) {
-      return `¡Hasta luego! Recuerda que si necesitas información adicional puedes contactar directamente a ${companyName}.`
+      return limitParagraphs(`¡Hasta luego! Recuerda que si necesitas información adicional puedes contactar directamente a ${companyName}.`)
     }
 
-    return `Lo siento, no tengo información sobre eso. ${TO_CONTACT_HINT}`
+    return limitParagraphs(`Lo siento, no tengo información sobre eso. ${TO_CONTACT_HINT}`)
   }
 }
