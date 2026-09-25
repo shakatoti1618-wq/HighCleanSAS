@@ -93,10 +93,24 @@ manuales en Render (env vars del servicio). Lista mínima (ver `.env.production.
 > `SESSION_SECRET`/`ADMIN_EMAIL`/`ADMIN_PASSWORD` usan valores de desarrollo, o si falta
 > `RESEND_API_KEY`. Es **intencional** (fail-closed).
 
-### Migraciones en release
+### Migraciones en release (Render Free — manual)
 
-El `preDeployCommand` del Blueprint ejecuta `npm run db:deploy` antes de liberar el
-nuevo deploy: si la migración falla, Render no publica la nueva versión.
+Render Free **no soporta `preDeployCommand`** (limitación del plan gratis).
+Por tanto, las migraciones **NO se ejecutan automáticamente** en cada deploy.
+
+Cuando agregues un módulo nuevo con cambios de esquema (nueva migración Prisma):
+
+1. **Desde local**, con `DATABASE_URL` apuntando a la BD de producción (Neon pooled):
+   ```bash
+   cd app/backend
+   npm run db:deploy        # prisma migrate deploy
+   ```
+2. Verifica que la migración se aplicó correctamente (consultando la BD o logs).
+3. Haz `git add` + commit del código que depende de la migración + push.
+4. Render hará deploy del código; la BD ya tiene el esquema actualizado.
+
+> ⚠️ Si el código nuevo requiere la migración y **no** la aplicaste antes,
+> el deploy fallará en runtime (errores de esquema). Haz la migración **antes** del push.
 
 ### Health check y cold start
 
@@ -159,6 +173,20 @@ curl -s https://highcleansas.com/api/v1/company         # JSON de la empresa
 - **Search Console**: verificación pendiente del Módulo 18 (Google Search Console →
   propiedad del dominio → sitemap → indexación). Un dominio recién registrado tarda en
   aparecer; no es un error de la web.
+
+## Checklist cuando agregues un módulo nuevo con cambios de BD
+
+1. **Desde local** (con `DATABASE_URL` → Neon producción):
+   ```bash
+   cd app/backend
+   npm run db:generate   # regenera cliente Prisma
+   npm run db:deploy     # aplica migración a Neon
+   ```
+2. Verifica que la migración se aplicó (consulta la BD o logs).
+3. Commit + push del código que depende de la migración.
+4. Render deploya el código (la BD ya tiene el esquema).
+
+> Esto sustituye al `preDeployCommand` automático que no existe en plan Free.
 
 ## Checklist de verificación post-deploy (manual)
 
