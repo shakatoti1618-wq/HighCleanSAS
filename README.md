@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🧼 High Clean SAS
+# High Clean SAS
 
 **Plataforma web corporativa de servicios de aseo y limpieza profesional**
 
@@ -13,13 +13,13 @@
 [![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=flat&logo=vitest&logoColor=white)](https://vitest.dev/)
 [![CI](https://img.shields.io/github/actions/workflow/status/shakatoti1618-wq/HighCleanSAS/ci.yml?style=flat&label=CI)](https://github.com/shakatoti1618-wq/HighCleanSAS/actions)
 
-**🌐 [highcleansas.com](https://highcleansas.com)**
+**[highcleansas.com](https://highcleansas.com)**
 
 </div>
 
 ---
 
-## 📋 Descripción
+## Descripción
 
 Sistema web completo para **High Clean S.A.S.**, empresa de aseo y limpieza en Colombia. El proyecto lleva de **cero presencia digital** a una plataforma en producción que publicita la empresa, muestra sus **7 servicios con modalidades y precios reales**, permite cotizaciones, postulación de hojas de vida, consultas mediante **chatbot con IA** y administración de contenido.
 
@@ -27,7 +27,7 @@ Desarrollado por módulos con **revisión y aprobación explícita** en cada eta
 
 ---
 
-## ✨ Funcionalidades
+## Funcionalidades
 
 - **Página corporativa** — Home, servicios, galería multimedia, reseñas, contacto, política de datos y más.
 - **7 servicios reales** — Descripciones fieles, modalidades/precios editables desde el panel admin y cobertura en 6 ciudades.
@@ -39,7 +39,7 @@ Desarrollado por módulos con **revisión y aprobación explícita** en cada eta
 
 ---
 
-## 🧱 Stack Tecnológico
+## Stack Tecnológico
 
 | Capa | Tecnologías |
 |------|-------------|
@@ -56,7 +56,7 @@ Desarrollado por módulos con **revisión y aprobación explícita** en cada eta
 
 ---
 
-## 🎨 Arquitectura y seguridad
+## Arquitectura y seguridad
 
 ### Backend por capas
 ```
@@ -82,7 +82,7 @@ Routes → Controllers → Services → Repositories → Prisma → PostgreSQL
 
 ---
 
-## 📁 Estructura del proyecto
+## Estructura del proyecto
 
 ```text
 highcleanproyect/
@@ -110,7 +110,7 @@ highcleanproyect/
 
 ---
 
-## 🚀 Puesta en marcha (local)
+## Puesta en marcha (local)
 
 ### Requisitos
 - Node.js ≥ 20 (recomendado **26**)
@@ -137,7 +137,7 @@ cd ../frontend
 cp .env.example .env.local  # define VITE_SITE_URL si haces dev con SEO
 ```
 
-> ⚠️ **Nunca** se suben `.env` al repositorio (ver `.gitignore`).
+> **Nunca** se suben `.env` al repositorio (ver `.gitignore`).
 
 ### 3. Base de datos
 
@@ -163,7 +163,7 @@ El dev server de Vite proxea `/api` hacia `localhost:3000`.
 
 ---
 
-## 🧪 Testing
+## Testing
 
 ```bash
 cd app/backend && npm run coverage   # suite backend + cobertura
@@ -174,7 +174,7 @@ cd app/frontend && npm run coverage  # suite frontend + cobertura
 
 ---
 
-## 🛠️ Scripts de utilidad
+## Scripts de utilidad
 
 | Comando | Descripción |
 |---------|-------------|
@@ -188,7 +188,7 @@ cd app/frontend && npm run coverage  # suite frontend + cobertura
 
 ---
 
-## ☁️ Deploy (producción)
+## Deploy (producción)
 
 Arquitectura **costo $0/mes** (ver `docs/deployment/GUIA-DEPLOY.md` y `ADR-004`):
 
@@ -205,21 +205,21 @@ El backend se despliega con **`render.yaml`** (Blueprint) vía Dockerfile. **Sin
 
 ---
 
-## 🔐 Variables de entorno (resumen)
+## Variables de entorno (resumen)
 
 ### Backend (`app/backend/.env`)
 | Variable | Obligatoria | Descripción |
 |----------|-------------|-------------|
-| `DATABASE_URL` | ✅ | Cadena de conexión a PostgreSQL |
-| `DATABASE_URL_TEST` | test | BD aislada para pruebas |
-| `SESSION_SECRET` | ✅ prod | Firma de cookie de sesión (≥32 chars) |
-| `CORS_ORIGIN` | ✅ prod | Origen del frontend (nunca `*` en prod) |
-| `ADMIN_EMAIL` / `ADMIN_PASSWORD` | ✅ prod | Credenciales admin del seed |
-| `EMAIL_FROM` | ✅ prod | Remitente verificado en Resend |
-| `NOTIFY_EMAIL_CONTACT` | ✅ prod | Correo de cotizaciones |
-| `NOTIFY_EMAIL_JOBS` | ✅ prod | Correo de hojas de vida |
-| `RESEND_API_KEY` | ✅ prod | API key de emails |
-| `R2_*` (6 vars) | ✅ prod | Credenciales Cloudflare R2 |
+| `DATABASE_URL` | Sí | Cadena de conexión a PostgreSQL |
+| `DATABASE_URL_TEST` | Solo test | BD aislada para pruebas |
+| `SESSION_SECRET` | Sí (prod) | Firma de cookie de sesión (≥32 chars) |
+| `CORS_ORIGIN` | Sí (prod) | Origen del frontend (nunca `*` en prod) |
+| `ADMIN_EMAIL` / `ADMIN_PASSWORD` | Sí (prod) | Credenciales admin del seed |
+| `EMAIL_FROM` | Sí (prod) | Remitente verificado en Resend |
+| `NOTIFY_EMAIL_CONTACT` | Sí (prod) | Correo de cotizaciones |
+| `NOTIFY_EMAIL_JOBS` | Sí (prod) | Correo de hojas de vida |
+| `RESEND_API_KEY` | Sí (prod) | API key de emails |
+| `R2_*` (6 vars) | Sí (prod) | Credenciales Cloudflare R2 |
 
 ### Frontend (`app/frontend/.env.local`)
 | Variable | Descripción |
@@ -230,7 +230,7 @@ El backend se despliega con **`render.yaml`** (Blueprint) vía Dockerfile. **Sin
 
 ---
 
-## 🔗 Enlaces útiles
+## Enlaces útiles
 
 - **Sitio en vivo:** https://highcleansas.com
 - **API health:** https://highclean-api.onrender.com/api/v1/health
@@ -239,7 +239,7 @@ El backend se despliega con **`render.yaml`** (Blueprint) vía Dockerfile. **Sin
 
 ---
 
-## 📄 Licencia
+## Licencia
 
 Proyecto privado de **High Clean S.A.S.** — Uso interno autorizado. No redistribuir sin permiso.
 
@@ -247,6 +247,6 @@ Proyecto privado de **High Clean S.A.S.** — Uso interno autorizado. No redistr
 
 <div align="center">
 
-**Hecho con ❤️ por Jonathan Heredia** · [GitHub](https://github.com/shakatoti1618-wq) · [LinkedIn](https://linkedin.com/in/jonathan-heredia)
+**Desarrollado por Jonathan Heredia** · [GitHub](https://github.com/shakatoti1618-wq) · [LinkedIn](https://linkedin.com/in/jonathan-heredia)
 
 </div>
